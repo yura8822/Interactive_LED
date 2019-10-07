@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PixelGird">
+        <attr name="quantityColumns" format="integer" />
+        <attr name="quantityRows" format="integer" />
+    </declare-styleable>
+
+</resources>
