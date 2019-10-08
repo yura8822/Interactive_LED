@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        custom:quantityColumns="16"
-        custom:quantityRows="16" />
+        custom:quantityColumns="32"
+        custom:quantityRows="32" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

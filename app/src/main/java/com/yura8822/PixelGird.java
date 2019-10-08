@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -62,6 +64,40 @@ public class PixelGird extends View {
         drawField(canvas);
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()){
+            case MotionEvent.ACTION_MOVE: {
+            }
+
+            case MotionEvent.ACTION_UP:{
+                Log.println(Log.WARN, "Up", String.valueOf(event.getHistorySize()));
+                for (int index = 0; index < event.getHistorySize(); index++){
+                    int i = (int)event.getHistoricalY(index)/cellSize;
+                    int j = (int)event.getHistoricalX(index)/cellSize;
+
+                    if (checkCoordinates(i, j)){
+                        if (colorList[i][j] == 0){
+                            colorList[i][j] = 999;
+                            Log.println(Log.WARN, "Invalidate", "!!!!!!!!!!!!!!!");
+                            invalidate();
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkCoordinates(int i, int j){
+        if (i >= 0 && j >= 0
+                && i < quantityRows && j < quantityColumns){
+            return true;
+        }
+        return false;
+    }
+
     private void calculateDimensions(){
         this.width = getMeasuredWidth();
         this.height = getMeasuredHeight();
@@ -100,6 +136,13 @@ public class PixelGird extends View {
             for(int j = 0; j < rectsList[i].length; j++){
                 left += cellSize;
                 right += cellSize;
+
+                //color selection
+                if (colorList[i][j] > 0){
+                    paintRect.setStyle(Paint.Style.FILL);
+                }else {
+                    paintRect.setStyle(Paint.Style.STROKE);
+                }
 
                 rectsList[i][j] = new Rect(left, top, right, bottom);
                 canvas.drawRect(rectsList[i][j], paintRect);
