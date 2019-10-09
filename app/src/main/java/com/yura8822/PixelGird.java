@@ -17,8 +17,8 @@ public class PixelGird extends View {
     private int quantityColumns;
     private int quantityRows;
 
-    int width;
-    int height;
+    private int width;
+    private int height;
 
     private Rect[][] rectsList;
     private int[][]  colorList;
@@ -64,29 +64,54 @@ public class PixelGird extends View {
         drawField(canvas);
     }
 
+    private int lastTouchI;
+    private int lastTouchJ;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        int currentTouchI = (int)event.getY() / cellSize;
+        int currentTouchJ = (int)event.getX() / cellSize;
+
         switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:{
+                if (checkCoordinates(currentTouchI, currentTouchJ)){
+                    this.colorList[currentTouchI][currentTouchJ] = 999;
+                }
+                lastTouchI = currentTouchI;
+                lastTouchJ = currentTouchJ;
+
+                return true;
+            }
+
             case MotionEvent.ACTION_MOVE: {
             }
 
             case MotionEvent.ACTION_UP:{
-                Log.println(Log.WARN, "Up", String.valueOf(event.getHistorySize()));
-                for (int index = 0; index < event.getHistorySize(); index++){
-                    int i = (int)event.getHistoricalY(index)/cellSize;
-                    int j = (int)event.getHistoricalX(index)/cellSize;
 
-                    if (checkCoordinates(i, j)){
-                        if (colorList[i][j] == 0){
-                            colorList[i][j] = 999;
-                            Log.println(Log.WARN, "Invalidate", "!!!!!!!!!!!!!!!");
-                            invalidate();
-                        }
+                for (int i = 0; i < event.getHistorySize(); i++){
+                    int historicalI = (int)event.getHistoricalY(i) / cellSize;
+                    int historicalJ = (int)event.getHistoricalX(i) / cellSize;
+
+                    if (checkCoordinates(historicalI, historicalJ) && checkCoordinates(lastTouchI, lastTouchJ)){
+                        rectTo(historicalI, historicalJ, lastTouchI, lastTouchJ);
                     }
+
+                    lastTouchI = historicalI;
+                    lastTouchJ = historicalJ;
                 }
+
+                if (checkCoordinates(currentTouchI, currentTouchJ) && checkCoordinates(lastTouchI, lastTouchJ)){
+                    rectTo(currentTouchI, currentTouchJ, lastTouchI, lastTouchJ);
+                }
+
                 break;
             }
         }
+        lastTouchI = currentTouchI;
+        lastTouchJ = currentTouchJ;
+
+        invalidate();
+
         return true;
     }
 
@@ -96,6 +121,19 @@ public class PixelGird extends View {
             return true;
         }
         return false;
+    }
+
+    //fills the field with rectangles from point to point
+    private void rectTo(int currentI, int currentJ, int oldI, int oldJ){
+        while (oldI != currentI || oldJ != currentJ){
+            if (oldI > currentI) oldI--;
+            else if (oldI < currentI) oldI++;
+
+            if (oldJ > currentJ) oldJ--;
+            else if (oldJ < currentJ) oldJ++;
+
+            this.colorList[oldI][oldJ] = 999;
+        }
     }
 
     private void calculateDimensions(){
@@ -120,7 +158,6 @@ public class PixelGird extends View {
     }
 
     private void drawField(Canvas canvas){
-
         // creating and drawing squares
         int top = 0 - cellSize;
         int left;
