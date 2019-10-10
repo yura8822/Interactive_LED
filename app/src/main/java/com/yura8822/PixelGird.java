@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -20,7 +19,6 @@ public class PixelGird extends View {
     private int width;
     private int height;
 
-    private Rect[][] rectsList;
     private int[][]  colorList;
 
     private int cellSize;
@@ -44,7 +42,6 @@ public class PixelGird extends View {
             typedArray.recycle();
         }
 
-        rectsList = new Rect[quantityRows][quantityColumns];
         colorList = new int[quantityRows][quantityColumns];
 
         paintRect = new Paint();
@@ -77,6 +74,7 @@ public class PixelGird extends View {
                 if (checkCoordinates(currentTouchI, currentTouchJ)){
                     this.colorList[currentTouchI][currentTouchJ] = 999;
                 }
+
                 lastTouchI = currentTouchI;
                 lastTouchJ = currentTouchJ;
 
@@ -92,17 +90,14 @@ public class PixelGird extends View {
                     int historicalI = (int)event.getHistoricalY(i) / cellSize;
                     int historicalJ = (int)event.getHistoricalX(i) / cellSize;
 
-                    if (checkCoordinates(historicalI, historicalJ) && checkCoordinates(lastTouchI, lastTouchJ)){
-                        rectTo(historicalI, historicalJ, lastTouchI, lastTouchJ);
-                    }
+
+                    rectTo(historicalI, historicalJ, lastTouchI, lastTouchJ);
 
                     lastTouchI = historicalI;
                     lastTouchJ = historicalJ;
                 }
 
-                if (checkCoordinates(currentTouchI, currentTouchJ) && checkCoordinates(lastTouchI, lastTouchJ)){
-                    rectTo(currentTouchI, currentTouchJ, lastTouchI, lastTouchJ);
-                }
+                rectTo(currentTouchI, currentTouchJ, lastTouchI, lastTouchJ);
 
                 break;
             }
@@ -132,7 +127,9 @@ public class PixelGird extends View {
             if (oldJ > currentJ) oldJ--;
             else if (oldJ < currentJ) oldJ++;
 
-            this.colorList[oldI][oldJ] = 999;
+            if (checkCoordinates(oldI, oldJ)){
+                this.colorList[oldI][oldJ] = 999;
+            }
         }
     }
 
@@ -164,13 +161,13 @@ public class PixelGird extends View {
         int right;
         int bottom = 0;
 
-        for (int i = 0; i < rectsList.length; i++){
+        for (int i = 0; i < quantityRows; i++){
             top += cellSize;
             left = 0 - cellSize;
             right = 0;
             bottom += cellSize;
 
-            for(int j = 0; j < rectsList[i].length; j++){
+            for(int j = 0; j < quantityColumns; j++){
                 left += cellSize;
                 right += cellSize;
 
@@ -181,8 +178,7 @@ public class PixelGird extends View {
                     paintRect.setStyle(Paint.Style.STROKE);
                 }
 
-                rectsList[i][j] = new Rect(left, top, right, bottom);
-                canvas.drawRect(rectsList[i][j], paintRect);
+                canvas.drawRect(new Rect(left, top, right, bottom), paintRect);
             }
         }
     }
