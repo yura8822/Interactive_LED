@@ -10,4 +10,12 @@
     <string name="title_other_devices">Другие доступные устройства</string>
     <string name="button_scan">Сканирование устройств</string>
 
+    <!--  BluetoothFragment -->
+    <string name="send">Send</string>
+    <string name="not_connected">You are not connected to a device</string>
+    <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
+    <string name="title_connecting">connecting...</string>
+    <string name="title_connected_to">Device connected</string>
+    <string name="title_not_connected">not connected</string>
+
 </resources>

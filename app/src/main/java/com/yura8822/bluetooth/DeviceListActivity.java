@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,8 +24,6 @@ import androidx.core.content.ContextCompat;
 
 import com.yura8822.R;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class DeviceListActivity extends AppCompatActivity {
