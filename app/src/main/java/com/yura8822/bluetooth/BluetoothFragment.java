@@ -1,5 +1,6 @@
 package com.yura8822.bluetooth;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -55,6 +56,17 @@ public class BluetoothFragment extends Fragment {
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_bluetooth, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        //component initialization
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         if (mBluetoothAdapter == null) {
@@ -88,14 +100,10 @@ public class BluetoothFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_bluetooth, container, false);
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        //component initialization
+    public void onDestroy() {
+        super.onDestroy();
+        //Deletes all messages in the queue of this Handler
+        mHandler.removeCallbacksAndMessages(null);
     }
 
     private void setupBT() {
@@ -129,6 +137,7 @@ public class BluetoothFragment extends Fragment {
     }
 
     //The Handler that gets information back from the BluetoothChatService
+    @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -149,6 +158,9 @@ public class BluetoothFragment extends Fragment {
                         case BluetoothService.STATE_NONE:
                             Toast.makeText(activity, "STATE_NONE", Toast.LENGTH_SHORT).show();
                             break;
+
+                        default:
+                            // BT disable !!!
                     }
                     break;
 

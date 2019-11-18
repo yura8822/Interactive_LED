@@ -4,6 +4,18 @@
     android:orientation="vertical"
     >
 
+    <include
+        android:id="@+id/toolbar_main"
+        layout="@layout/toolbar_main"
+        />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
     <TextView
         android:id="@+id/title_paired_devices"
         android:layout_width="match_parent"

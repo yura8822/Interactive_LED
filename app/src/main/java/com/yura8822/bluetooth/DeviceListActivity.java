@@ -10,15 +10,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -38,13 +41,25 @@ public class DeviceListActivity extends AppCompatActivity {
     // Newly discovered devices
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
 
+    private Toolbar mToolbarDL;
+
+    private ProgressBar mProgressBar;
+
+    private MenuItem mBT_on;
+    private MenuItem mBT_disabled;
+    private MenuItem mBT_searching;
+    private MenuItem mBT_connected;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Setup the window
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
         setContentView(R.layout.activity_device_list);
+
+        mProgressBar = findViewById(R.id.progressBar);
+        mProgressBar.setVisibility(ProgressBar.INVISIBLE);
+
+        mToolbarDL = findViewById(R.id.toolbar_main);
+        setSupportActionBar(mToolbarDL);
 
         //request the permission
         accessLocationPermission();
@@ -102,6 +117,28 @@ public class DeviceListActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        mBT_on = menu.findItem(R.id.bluetooth_on);
+        mBT_disabled = menu.findItem(R.id.bluetooth_disabled);
+        mBT_searching = menu.findItem(R.id.bluetooth_searching);
+        mBT_connected = menu.findItem(R.id.bluetooth_connected);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        mBT_on.setVisible(false);
+        mBT_disabled.setVisible(false);
+        mBT_searching.setVisible(false);
+        mBT_connected.setVisible(false);
+        menu.findItem(R.id.device_list_activity).setVisible(false);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         // Make sure we're not doing discovery anymore
@@ -116,8 +153,10 @@ public class DeviceListActivity extends AppCompatActivity {
         Log.d(TAG, "doDiscovery()");
 
         // Indicate scanning in the title
-        setProgressBarIndeterminateVisibility(true);
-        setTitle(R.string.scanning);
+        mProgressBar.setVisibility(ProgressBar.VISIBLE);
+        mProgressBar.setIndeterminate(true);
+        mToolbarDL.setSubtitle(R.string.scanning);
+        mBT_searching.setVisible(true);
 
         // Turn on sub-title for new devices
         findViewById(R.id.title_new_devices).setVisibility(View.VISIBLE);
@@ -148,8 +187,11 @@ public class DeviceListActivity extends AppCompatActivity {
                 }
                 // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                setProgressBarIndeterminateVisibility(false);
-                setTitle(R.string.select_device);
+                mToolbarDL.setSubtitle(R.string.select_device);
+                mProgressBar.setIndeterminate(false);
+                mProgressBar.setVisibility(ProgressBar.INVISIBLE);
+                mBT_searching.setVisible(false);
+
                 if (mNewDevicesArrayAdapter.getCount() == 0) {
                     String noDevices = getResources().getText(R.string.none_found).toString();
                     mNewDevicesArrayAdapter.add(noDevices);
@@ -186,7 +228,7 @@ public class DeviceListActivity extends AppCompatActivity {
 
         if (permissionCheck != 0){
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
         }
     }
 }
