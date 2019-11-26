@@ -13,7 +13,7 @@
     <!--  BluetoothFragment -->
     <string name="send">Send</string>
     <string name="not_connected">You are not connected to a device</string>
-    <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
+    <string name="bt_not_enabled_leaving">Bluetooth was not enabled.</string>
     <string name="title_connecting">connecting...</string>
     <string name="title_connected_to">Device connected</string>
     <string name="title_not_connected">not connected</string>
@@ -24,5 +24,8 @@
     <string name="bluetooth_disabled">Bluetooth выключен</string>
     <string name="bluetooth_searching">Поиск устройств</string>
     <string name="device_list">Найти устройства</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

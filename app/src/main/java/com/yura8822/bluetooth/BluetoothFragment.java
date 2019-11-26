@@ -10,10 +10,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -41,9 +43,13 @@ public class BluetoothFragment extends Fragment {
     //Member object for the bluetooth services
     private BluetoothService mBTService = null;
 
+    public BluetoothFragment() {
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -158,9 +164,6 @@ public class BluetoothFragment extends Fragment {
                         case BluetoothService.STATE_NONE:
                             Toast.makeText(activity, "STATE_NONE", Toast.LENGTH_SHORT).show();
                             break;
-
-                        default:
-                            // BT disable !!!
                     }
                     break;
 
@@ -235,5 +238,14 @@ public class BluetoothFragment extends Fragment {
         mBTService.connect(device);
     }
 
-
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.device_list_activity:
+                Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
+                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+                return true;
+        }
+        return false;
+    }
 }

@@ -10,8 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -45,11 +43,6 @@ public class DeviceListActivity extends AppCompatActivity {
 
     private ProgressBar mProgressBar;
 
-    private MenuItem mBT_on;
-    private MenuItem mBT_disabled;
-    private MenuItem mBT_searching;
-    private MenuItem mBT_connected;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +51,7 @@ public class DeviceListActivity extends AppCompatActivity {
         mProgressBar = findViewById(R.id.progressBar);
         mProgressBar.setVisibility(ProgressBar.INVISIBLE);
 
-        mToolbarDL = findViewById(R.id.toolbar_main);
+        mToolbarDL = findViewById(R.id.toolbar_state);
         setSupportActionBar(mToolbarDL);
 
         //request the permission
@@ -116,27 +109,9 @@ public class DeviceListActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        mBT_on = menu.findItem(R.id.bluetooth_on);
-        mBT_disabled = menu.findItem(R.id.bluetooth_disabled);
-        mBT_searching = menu.findItem(R.id.bluetooth_searching);
-        mBT_connected = menu.findItem(R.id.bluetooth_connected);
 
-        return super.onCreateOptionsMenu(menu);
-    }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        mBT_on.setVisible(false);
-        mBT_disabled.setVisible(false);
-        mBT_searching.setVisible(false);
-        mBT_connected.setVisible(false);
-        menu.findItem(R.id.device_list_activity).setVisible(false);
-        return super.onPrepareOptionsMenu(menu);
-    }
 
     @Override
     protected void onDestroy() {
@@ -156,7 +131,6 @@ public class DeviceListActivity extends AppCompatActivity {
         mProgressBar.setVisibility(ProgressBar.VISIBLE);
         mProgressBar.setIndeterminate(true);
         mToolbarDL.setSubtitle(R.string.scanning);
-        mBT_searching.setVisible(true);
 
         // Turn on sub-title for new devices
         findViewById(R.id.title_new_devices).setVisibility(View.VISIBLE);
@@ -190,7 +164,7 @@ public class DeviceListActivity extends AppCompatActivity {
                 mToolbarDL.setSubtitle(R.string.select_device);
                 mProgressBar.setIndeterminate(false);
                 mProgressBar.setVisibility(ProgressBar.INVISIBLE);
-                mBT_searching.setVisible(false);
+
 
                 if (mNewDevicesArrayAdapter.getCount() == 0) {
                     String noDevices = getResources().getText(R.string.none_found).toString();

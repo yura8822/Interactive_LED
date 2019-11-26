@@ -14,12 +14,6 @@
         android:orderInCategory="2"
         app:showAsAction="always" />
 
-    <item android:id="@+id/bluetooth_searching"
-        android:title="@string/bluetooth_searching"
-        android:icon="@drawable/baseline_bluetooth_searching_black_18dp"
-        android:orderInCategory="3"
-        app:showAsAction="always" />
-
     <item android:id="@+id/bluetooth_connected"
         android:title="@string/bluetooth_connected"
         android:icon="@drawable/baseline_bluetooth_connected_black_18dp"
