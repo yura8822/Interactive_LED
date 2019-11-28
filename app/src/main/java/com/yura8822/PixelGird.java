@@ -13,6 +13,15 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 public class PixelGird extends View {
+
+    public interface ListenerPixelGird{
+        void sendArrayGird(int[][] colorList);
+    }
+
+    private Context activity;
+
+    private ListenerPixelGird listenerPixelGird;
+
     private int quantityColumns;
     private int quantityRows;
 
@@ -25,8 +34,11 @@ public class PixelGird extends View {
 
     private Paint paintRect;
 
+
+
     public PixelGird(Context context) {
         super(context);
+        this.activity = context;
     }
 
     public PixelGird(Context context, @Nullable AttributeSet attrs) {
@@ -47,6 +59,8 @@ public class PixelGird extends View {
         paintRect = new Paint();
         paintRect.setColor(Color.BLACK);
         paintRect.setStyle(Paint.Style.STROKE);
+
+        this.activity = context;
     }
 
     @Override
@@ -59,6 +73,14 @@ public class PixelGird extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         drawField(canvas);
+
+        if (listenerPixelGird == null){ //temp!!!
+            listenerPixelGird = (ListenerPixelGird) activity;
+        }
+
+        if (listenerPixelGird != null){
+            listenerPixelGird.sendArrayGird(colorList);
+        }
     }
 
     private int lastTouchI;

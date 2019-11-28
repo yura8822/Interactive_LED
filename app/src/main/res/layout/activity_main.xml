@@ -22,7 +22,7 @@
         android:id="@+id/pixelGird2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        custom:quantityColumns="32"
-        custom:quantityRows="32" />
+        custom:quantityColumns="7"
+        custom:quantityRows="7" />
 
 </LinearLayout>

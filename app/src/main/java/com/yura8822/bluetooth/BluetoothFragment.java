@@ -129,17 +129,35 @@ public class BluetoothFragment extends Fragment {
     }
 
     //Sends a message
-    private void sendMessage(String message) {
+    public void sendMessage(int[][] colorList) {
         // Check that we're actually connected before trying anything
-        if (mBTService.getState() != BluetoothService.STATE_CONNECTED) {
+        if (mBTService == null ||
+                mBTService.getState() != BluetoothService.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Check that there's actually something to send
-        if (message.length() > 0) {
-            // SEND COLOR BYTE ARYS (RGB)!!!
+        byte[] resultArray = new byte[149];
+        int index = 0;
+        resultArray[index] = (byte)111;
+
+        for (int i = 0; i < colorList.length; i++){
+            for(int j = 0; j < colorList[i].length; j++){
+                if (colorList[i][j] == 0){
+                    resultArray[++index] = (byte)1;
+                    resultArray[++index] = (byte)1;
+                    resultArray[++index] = (byte)1;
+                }else {
+                    resultArray[++index] = (byte)200;
+                    resultArray[++index] = (byte)150;
+                    resultArray[++index] = (byte)100;
+                }
+            }
         }
+        resultArray[++index] = (byte) 112;
+
+        mBTService.write(resultArray);
     }
 
     //The Handler that gets information back from the BluetoothChatService
@@ -151,19 +169,21 @@ public class BluetoothFragment extends Fragment {
 
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
-                    switch (msg.arg1) {
+                    if (activity != null){ //temp !!!
+                        switch (msg.arg1) {
 
-                        case BluetoothService.STATE_CONNECTED:
-                            Toast.makeText(activity, "STATE_CONNECTED", Toast.LENGTH_SHORT).show();
-                            break;
+                            case BluetoothService.STATE_CONNECTED:
+                                Toast.makeText(activity, "STATE_CONNECTED", Toast.LENGTH_SHORT).show();
+                                break;
 
-                        case BluetoothService.STATE_CONNECTING:
-                            Toast.makeText(activity, "STATE_CONNECTING", Toast.LENGTH_SHORT).show();
-                            break;
+                            case BluetoothService.STATE_CONNECTING:
+                                Toast.makeText(activity, "STATE_CONNECTING", Toast.LENGTH_SHORT).show();
+                                break;
 
-                        case BluetoothService.STATE_NONE:
-                            Toast.makeText(activity, "STATE_NONE", Toast.LENGTH_SHORT).show();
-                            break;
+                            case BluetoothService.STATE_NONE:
+                                Toast.makeText(activity, "STATE_NONE", Toast.LENGTH_SHORT).show();
+                                break;
+                        }
                     }
                     break;
 

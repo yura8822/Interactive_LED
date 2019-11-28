@@ -12,6 +12,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class BluetoothService {
@@ -211,11 +212,14 @@ public class BluetoothService {
             mmDevice = device;
             BluetoothSocket tmp = null;
 
-
             // Get a BluetoothSocket for a connection with the given BluetoothDevice
             try {
-                tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
-            } catch (IOException e) {
+                //tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
+                final Method m = device.getClass().
+                        getMethod("createInsecureRfcommSocketToServiceRecord", UUID.class);
+                tmp = (BluetoothSocket) m.invoke(device, MY_UUID);
+
+            } catch (Exception e) {
                 Log.e(TAG, "create() failed", e);
             }
             mmSocket = tmp;
