@@ -11,14 +11,13 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import java.util.Arrays;
 
 public class PixelGird extends View {
 
     public interface ListenerPixelGird{
         void sendArrayGird(int[][] colorList);
     }
-
-    private Context activity;
 
     private ListenerPixelGird listenerPixelGird;
 
@@ -30,6 +29,8 @@ public class PixelGird extends View {
 
     private int[][]  colorList;
 
+    private int[][] previousColorList;
+
     private int cellSize;
 
     private Paint paintRect;
@@ -38,7 +39,8 @@ public class PixelGird extends View {
 
     public PixelGird(Context context) {
         super(context);
-        this.activity = context;
+        this.listenerPixelGird = (ListenerPixelGird)context;
+        previousColorList = new int[quantityRows][quantityColumns];
     }
 
     public PixelGird(Context context, @Nullable AttributeSet attrs) {
@@ -60,7 +62,9 @@ public class PixelGird extends View {
         paintRect.setColor(Color.BLACK);
         paintRect.setStyle(Paint.Style.STROKE);
 
-        this.activity = context;
+        this.listenerPixelGird = (ListenerPixelGird)context;
+
+        previousColorList = new int[quantityRows][quantityColumns];
     }
 
     @Override
@@ -73,14 +77,6 @@ public class PixelGird extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         drawField(canvas);
-
-        if (listenerPixelGird == null){ //temp!!!
-            listenerPixelGird = (ListenerPixelGird) activity;
-        }
-
-        if (listenerPixelGird != null){
-            listenerPixelGird.sendArrayGird(colorList);
-        }
     }
 
     private int lastTouchI;
@@ -127,7 +123,16 @@ public class PixelGird extends View {
         lastTouchI = currentTouchI;
         lastTouchJ = currentTouchJ;
 
-        invalidate();
+        //if the elements of the array have changed, then draw and send
+        if (!Arrays.deepEquals(colorList, previousColorList)){
+            for (int i = 0; i < colorList.length; i++){
+                previousColorList[i] = colorList[i].clone();
+            }
+            if (listenerPixelGird != null) {
+                listenerPixelGird.sendArrayGird(colorList);
+            }
+            invalidate();
+        }
 
         return true;
     }

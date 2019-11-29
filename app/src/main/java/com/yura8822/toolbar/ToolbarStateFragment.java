@@ -120,6 +120,7 @@ public class ToolbarStateFragment extends Fragment {
                     }else if (state == BluetoothAdapter.STATE_OFF){
                         mBT_on.setVisible(false);
                         mBT_disabled.setVisible(true);
+                        mBT_connected.setVisible(false);
                     }
                     break;
 
