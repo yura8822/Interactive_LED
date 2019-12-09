@@ -1,50 +1,41 @@
 package com.yura8822;
 
 import android.os.Bundle;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.yura8822.bluetooth.BluetoothFragment;
+import com.google.android.material.tabs.TabLayout;
+import com.yura8822.toolbar.CustomViewPager;
+import com.yura8822.toolbar.SectionsPagerAdapter;
 
-public class MainActivity extends AppCompatActivity implements PixelGird.ListenerPixelGird {
-    private final String RESTART_FRAFMENT = "RESTART_FRAGMENT";
+public class MainActivity extends AppCompatActivity {
 
-    private Toolbar mToolbar;
-    private BluetoothFragment mBluetoothFragment;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mToolbar = findViewById(R.id.toolbar_state);
-        setSupportActionBar(mToolbar);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        if (savedInstanceState == null){
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            mBluetoothFragment = new BluetoothFragment();
-            fragmentTransaction.replace(R.id.fragment_container, mBluetoothFragment, RESTART_FRAFMENT);
-            fragmentTransaction.commit();
-        }else {
-            mBluetoothFragment = (BluetoothFragment)getSupportFragmentManager()
-                    .findFragmentByTag(RESTART_FRAFMENT);
-        }
+        SectionsPagerAdapter mSectionsPagerAdapter =
+                new SectionsPagerAdapter(getSupportFragmentManager(),
+                        FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
-    }
+        CustomViewPager customViewPager = findViewById(R.id.pager);
+        customViewPager.setSwipeEnabling(false);
+        customViewPager.setAdapter(mSectionsPagerAdapter);
 
-    @Override
-    public void sendArrayGird(int[][] colorList) {
-        mBluetoothFragment.sendMessage(colorList);
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(RESTART_FRAFMENT, true);
+        TabLayout tabLayout = findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(customViewPager);
     }
 }
+
+
+
+
+

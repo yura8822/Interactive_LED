@@ -5,24 +5,12 @@
     android:orientation="vertical"
     xmlns:custom="http://schemas.android.com/apk/res-auto">
 
-    <fragment
-        android:id="@+id/toolbar_state"
-        android:name="com.yura8822.toolbar.ToolbarStateFragment"
+    <include
+        layout="@layout/toolbar_main"/>
+
+    <com.yura8822.toolbar.CustomViewPager
+        android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        >
-    </FrameLayout>
-
-    <com.yura8822.PixelGird
-        android:id="@+id/pixelGird2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        custom:quantityColumns="7"
-        custom:quantityRows="7" />
 
 </LinearLayout>
