@@ -5,11 +5,8 @@
     android:orientation="vertical"
     >
 
-    <fragment
-        android:id="@+id/toolbar_state"
-        android:name="com.yura8822.toolbar.ToolbarStateFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    <include
+        layout="@layout/toolbar_main"/>
 
     <ProgressBar
         android:id="@+id/progressBar"

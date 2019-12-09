@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,8 @@ public class BluetoothFragment extends Fragment {
 
     //Member object for the bluetooth services
     private BluetoothService mBTService = null;
+
+    private MenuItem mBT_connected;
 
     public BluetoothFragment() {
     }
@@ -173,15 +176,24 @@ public class BluetoothFragment extends Fragment {
                         switch (msg.arg1) {
 
                             case BluetoothService.STATE_CONNECTED:
-                                Toast.makeText(activity, "STATE_CONNECTED", Toast.LENGTH_SHORT).show();
+                                if (mBT_connected != null){
+                                    mBT_connected.setVisible(true);
+                                }
+                                Log.d(TAG, "MESSAGE_STATE_CHANGE: STATE_CONNECTED");
                                 break;
 
                             case BluetoothService.STATE_CONNECTING:
-                                Toast.makeText(activity, "STATE_CONNECTING", Toast.LENGTH_SHORT).show();
+                                if (mBT_connected != null){
+                                    mBT_connected.setVisible(false);
+                                }
+                                Log.d(TAG, "MESSAGE_STATE_CHANGE: STATE_CONNECTING");
                                 break;
 
                             case BluetoothService.STATE_NONE:
-                                Toast.makeText(activity, "STATE_NONE", Toast.LENGTH_SHORT).show();
+                                if (mBT_connected != null){
+                                    mBT_connected.setVisible(false);
+                                }
+                                Log.d(TAG, "MESSAGE_STATE_CHANGE: STATE_NONE");
                                 break;
                         }
                     }
@@ -256,6 +268,15 @@ public class BluetoothFragment extends Fragment {
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         // Attempt to connect to the device
         mBTService.connect(device);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        Log.d(TAG, "onPrepareOptionsMenu");
+        super.onPrepareOptionsMenu(menu);
+        mBT_connected = menu.findItem(R.id.bluetooth_connected);
+        mBT_connected.setVisible(false);
+
     }
 
     @Override

@@ -51,7 +51,7 @@ public class DeviceListActivity extends AppCompatActivity {
         mProgressBar = findViewById(R.id.progressBar);
         mProgressBar.setVisibility(ProgressBar.INVISIBLE);
 
-        mToolbarDL = findViewById(R.id.toolbar_state);
+        mToolbarDL = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbarDL);
 
         //request the permission
