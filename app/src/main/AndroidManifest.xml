@@ -18,7 +18,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"> <!-- temporary measure -->
 
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,8 +28,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".bluetooth.DeviceListActivity">
-            
+        <activity
+            android:name=".bluetooth.DeviceListActivity"
+            android:screenOrientation="portrait">
+
         </activity>
 
     </application>

@@ -272,11 +272,8 @@ public class BluetoothFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        Log.d(TAG, "onPrepareOptionsMenu");
         super.onPrepareOptionsMenu(menu);
         mBT_connected = menu.findItem(R.id.bluetooth_connected);
-        mBT_connected.setVisible(false);
-
     }
 
     @Override

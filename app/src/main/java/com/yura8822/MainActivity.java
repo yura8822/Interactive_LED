@@ -14,18 +14,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.tabs.TabLayout;
 import com.yura8822.bluetooth.BluetoothFragment;
+import com.yura8822.drawing_field.DrawingGirdFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PixelGird.ListenerPixelGird {
 
     private static final String TAG = "MainActivity";
 
-    private final String BUNDLE_BLUETOOTH_FRAGMENT = "BluetoothFragment";
-
     private Toolbar toolbar;
     private BluetoothFragment mBluetoothFragment;
+    private DrawingGirdFragment mDrawingGirdFragment;
 
     MenuItem mBT_on;
     MenuItem mBT_disabled;
@@ -38,15 +39,14 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (savedInstanceState == null){
-            mBluetoothFragment = new BluetoothFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, mBluetoothFragment)
-                    .commit();
-        }else {
-            mBluetoothFragment = (BluetoothFragment) getSupportFragmentManager()
-                    .getFragment(savedInstanceState,BUNDLE_BLUETOOTH_FRAGMENT );
-        }
+
+        mBluetoothFragment = new BluetoothFragment();
+        mDrawingGirdFragment = new DrawingGirdFragment();
+
+        FragmentTransaction fm = getSupportFragmentManager().beginTransaction();
+        fm.replace(R.id.bluetooth_container, mBluetoothFragment);
+        fm.replace(R.id.mode_container, mDrawingGirdFragment);
+        fm .commit();
 
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.addTab(tabLayout.newTab().setText("Paint"));
@@ -56,12 +56,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()){
+                    //test
                     case 0:
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, new Fragment()).commit();
+                                .replace(R.id.mode_container, mDrawingGirdFragment).commit();
+                        Log.d(TAG, "replace mDrawingGirdFragment");
+                        break;
                     case 1:
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, new Fragment()).commit();
+                                .replace(R.id.mode_container, new Fragment()).commit();
+                        Log.d(TAG, "mode container item 2");
+                        break;
                 }
             }
 
@@ -93,12 +98,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        getSupportFragmentManager().putFragment(outState, BUNDLE_BLUETOOTH_FRAGMENT, mBluetoothFragment);
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         mBT_on = menu.findItem(R.id.bluetooth_on);
@@ -112,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
             mBT_on.setVisible(false);
             mBT_disabled.setVisible(true);
         }
+
+        menu.findItem(R.id.bluetooth_connected).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -139,6 +140,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    @Override
+    public void sendArrayGird(int[][] colorList) {
+        mBluetoothFragment.sendMessage(colorList);
+    }
 }
 
 
