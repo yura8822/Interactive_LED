@@ -1,4 +1,4 @@
-package com.yura8822;
+package com.yura8822.drawing_field;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -11,6 +11,9 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+
+import com.yura8822.R;
+
 import java.util.Arrays;
 
 public class PixelGird extends View {

@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <com.yura8822.PixelGird
+    <com.yura8822.drawing_field.PixelGird
         android:id="@+id/pixel_gird"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

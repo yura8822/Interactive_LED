@@ -15,6 +15,11 @@
 
     <FrameLayout
         android:id="@+id/mode_container"
+        android:layout_width="20dp"
+        android:layout_height="20dp"/>
+
+    <com.yura8822.drawing_field.ColorPicker
+        android:id="@+id/colorPicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 </LinearLayout>
