@@ -17,7 +17,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.tabs.TabLayout;
 import com.yura8822.bluetooth.BluetoothFragment;
-import com.yura8822.drawing_field.DrawingGirdFragment;
+import com.yura8822.drawing_field.PixelGirdFragment;
 import com.yura8822.drawing_field.PixelGird;
 
 public class MainActivity extends AppCompatActivity implements PixelGird.ListenerPixelGird {
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements PixelGird.Listene
 
     private Toolbar toolbar;
     private BluetoothFragment mBluetoothFragment;
-    private DrawingGirdFragment mDrawingGirdFragment;
+    private PixelGirdFragment mPixelGirdFragment;
 
     MenuItem mBT_on;
     MenuItem mBT_disabled;
@@ -41,11 +41,11 @@ public class MainActivity extends AppCompatActivity implements PixelGird.Listene
 
 
         mBluetoothFragment = new BluetoothFragment();
-        mDrawingGirdFragment = new DrawingGirdFragment();
+        mPixelGirdFragment = new PixelGirdFragment();
 
         FragmentTransaction fm = getSupportFragmentManager().beginTransaction();
         fm.replace(R.id.bluetooth_container, mBluetoothFragment);
-        fm.replace(R.id.mode_container, mDrawingGirdFragment);
+        fm.replace(R.id.mode_container, mPixelGirdFragment);
         fm .commit();
 
         TabLayout tabLayout = findViewById(R.id.tabs);
@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity implements PixelGird.Listene
                     //test
                     case 0:
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.mode_container, mDrawingGirdFragment).commit();
-                        Log.d(TAG, "replace mDrawingGirdFragment");
+                                .replace(R.id.mode_container, mPixelGirdFragment).commit();
+                        Log.d(TAG, "replace mPixelGirdFragment");
                         break;
                     case 1:
                         getSupportFragmentManager().beginTransaction()

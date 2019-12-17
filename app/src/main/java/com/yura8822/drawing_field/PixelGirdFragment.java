@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 import com.yura8822.R;
 
 
-public class DrawingGirdFragment extends Fragment {
+public class PixelGirdFragment extends Fragment {
 
-    public DrawingGirdFragment() {
+    public PixelGirdFragment() {
         // Required empty public constructor
     }
 
@@ -22,7 +22,7 @@ public class DrawingGirdFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_drawing_gird, container, false);
+        return inflater.inflate(R.layout.fragment_pixel_gird, container, false);
     }
 
 }
