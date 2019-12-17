@@ -22,10 +22,12 @@
     <string name="bluetooth_on">Bluetooth включен</string>
     <string name="bluetooth_connected">Соединен</string>
     <string name="bluetooth_disabled">Bluetooth выключен</string>
-    <string name="bluetooth_searching">Поиск устройств</string>
     <string name="device_list">Найти устройства</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--    ColorPicker-->
+    <string name="select">Выбрать</string>
+    <string name="hue">Цветовой тон</string>
+    <string name="saturation">Насыщенность</string>
+    <string name="value">Яркость</string>
 
 </resources>

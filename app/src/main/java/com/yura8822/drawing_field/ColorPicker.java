@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.SweepGradient;
@@ -15,17 +16,19 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.yura8822.R;
+
 public class ColorPicker extends View {
 
     private final String TAG = "ColorPicker";
 
-    private final float COEFFICIENT_STROKE_WIDTH = 0.055f;
+    private final float COEFFICIENT_STROKE_WIDTH = 0.04f;
 
-    private final float COEFFICIENT_RADIUS_OUTER_CIRCLE = 0.5f;
-    private final float COEFFICIENT_RADIUS_INNER_CIRCLE = 0.34f;
-    private final float COEFFICIENT_RADIUS_RESULT_CIRCLE = 0.15f;
+    private final float COEFFICIENT_RADIUS_OUTER_CIRCLE = 0.43f;
+    private final float COEFFICIENT_RADIUS_INNER_CIRCLE = 0.28f;
+    private final float COEFFICIENT_RADIUS_RESULT_CIRCLE = 0.13f;
 
-    private final float COEFFICIENT_ASPECT_RATIO = 0.2f;
+    private final float COEFFICIENT_ASPECT_RATIO = 0.1f;
 
     private final int OUTER_CIRCLE = 1;
     private final int INNER_CIRCLE = 2;
@@ -52,6 +55,7 @@ public class ColorPicker extends View {
     private float radiusResultCircle;
 
     private float radiusMarkerCircle;
+    private float radiusMarkerCircleSecond;
 
 
     private RectF rectBrightness;
@@ -70,6 +74,7 @@ public class ColorPicker extends View {
     private Paint paintResultCircle;
     private Paint paintBrightnessRect;
     private Paint paintMarkerColor;
+    private Paint paintMarkerColorSecond;
 
 
     private Shader shaderCircle;
@@ -88,6 +93,9 @@ public class ColorPicker extends View {
 
     private float angle;
     private int resultColor;
+
+    private Paint paintPathText;
+    private Path pathText;
 
     public ColorPicker(Context context) {
         super(context);
@@ -123,15 +131,55 @@ public class ColorPicker extends View {
         //brightness rectangle
         canvas.drawRoundRect(rectBrightness, cornersRadiusBrightnessRect,
                 cornersRadiusBrightnessRect, paintBrightnessRect);
+
         //outer marker circle
         canvas.drawCircle(centerCircleOuterMarkerX, centerCircleOuterMarkerY,
                 radiusMarkerCircle, paintMarkerColor);
+        canvas.drawCircle(centerCircleOuterMarkerX, centerCircleOuterMarkerY,
+                radiusMarkerCircleSecond, paintMarkerColorSecond);
+
         //inner marker circle
         canvas.drawCircle(centerCircleInnerMarkerX, centerCircleInnerMarkerY,
                 radiusMarkerCircle, paintMarkerColor);
+        canvas.drawCircle(centerCircleInnerMarkerX, centerCircleInnerMarkerY,
+                radiusMarkerCircleSecond, paintMarkerColorSecond);
+
         //rect marker circle
         canvas.drawCircle(centerCircleRectMarkerX, centerCircleRectMarkerY,
                 radiusMarkerCircle, paintMarkerColor);
+        canvas.drawCircle(centerCircleRectMarkerX, centerCircleRectMarkerY,
+                radiusMarkerCircleSecond, paintMarkerColorSecond);
+
+        //draw text
+        //for result circle
+        pathText.reset();
+        pathText.addCircle(centerCircleX, centerCircleY, radiusResultCircle, Path.Direction.CW);
+        canvas.drawTextOnPath(getResources().getText(R.string.select).toString(), pathText,
+                radiusResultCircle * 4, strokeWidth / 1.1f - strokeWidth, paintPathText);
+
+        //for inner circle
+        pathText.reset();
+        pathText.addCircle(centerCircleX, centerCircleY, radiusInnerCircle, Path.Direction.CW);
+        canvas.drawTextOnPath(getResources().getText(R.string.saturation).toString(), pathText,
+                radiusInnerCircle * 4,
+                strokeWidth / 2.5f - strokeWidth, paintPathText);
+
+        //for outer circle
+        pathText.reset();
+        pathText.addCircle(centerCircleX, centerCircleY, radiusOuterCircle, Path.Direction.CW);
+        canvas.drawTextOnPath(getResources().getText(R.string.hue).toString(), pathText,
+                radiusOuterCircle * 4,
+                strokeWidth / 2.5f - strokeWidth, paintPathText);
+
+        //for rectangle
+        pathText.reset();
+        pathText.moveTo(leftRect, topRect);
+        pathText.lineTo(rightRect, topRect);
+        canvas.drawTextOnPath(getResources().getText(R.string.value).toString(), pathText,
+                radiusOuterCircle,
+                strokeWidth / 1.25f - strokeWidth, paintPathText);
+
+
 
     }
 
@@ -156,9 +204,9 @@ public class ColorPicker extends View {
         cornersRadiusBrightnessRect = strokeWidth;
 
         //calculate the size brightness rect
-        leftRect = 0;
+        leftRect = width - (radiusOuterCircle + strokeWidth / 2) * 2;
         topRect = height - strokeWidth;
-        rightRect = width;
+        rightRect = width - (width - (radiusOuterCircle + strokeWidth / 2) * 2);
         bottomRect = height;
 
         //calculation of the central coordinates of the marker circle
@@ -168,6 +216,7 @@ public class ColorPicker extends View {
 
         //calculate the radius marker circle
         radiusMarkerCircle = strokeWidth/2;
+        radiusMarkerCircleSecond = strokeWidth/2 - (strokeWidth*0.05f);
     }
 
     private void init(){
@@ -215,8 +264,19 @@ public class ColorPicker extends View {
         //initialize marker for selected color
         paintMarkerColor = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintMarkerColor.setStyle(Paint.Style.STROKE);
-        paintMarkerColor.setStrokeWidth(strokeWidth*0.05f);
-        paintMarkerColor.setColor(Color.WHITE);
+        paintMarkerColor.setStrokeWidth(strokeWidth * 0.05f);
+        paintMarkerColor.setColor(Color.BLACK);
+
+        paintMarkerColorSecond = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paintMarkerColorSecond.setStyle(Paint.Style.STROKE);
+        paintMarkerColorSecond.setStrokeWidth(strokeWidth * 0.05f);
+        paintMarkerColorSecond.setColor(Color.WHITE);
+
+        //initialize objects for drawing text
+        paintPathText = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paintPathText.setColor(getResources().getColor(R.color.colorPrimaryDark));
+        paintPathText.setTextSize(strokeWidth/2);
+        pathText = new Path();
     }
 
 
@@ -311,8 +371,8 @@ public class ColorPicker extends View {
         //redraw the brightness rectangle depending on the color choice of the outer circle
         shaderRect = new LinearGradient(leftRect, topRect, rightRect, bottomRect,
                 new int[]{
-                        Color.HSVToColor(new float[]{hsv[0], 1f, 0f}),
-                        Color.HSVToColor(new float[]{hsv[0], 1f, 1f})
+                        Color.HSVToColor(new float[]{hsv[0], hsv[1], 0f}),
+                        Color.HSVToColor(new float[]{hsv[0], hsv[1], 1f})
                 }, null, Shader.TileMode.CLAMP);
         paintBrightnessRect.setShader(shaderRect);
 
@@ -371,11 +431,11 @@ public class ColorPicker extends View {
     }
 
     private void moveRectMarker(float x){
-        if (x < strokeWidth/2){
-            centerCircleRectMarkerX = strokeWidth/2;
+        if (x < leftRect + strokeWidth / 2){
+            centerCircleRectMarkerX = leftRect + strokeWidth/2;
             centerCircleRectMarkerY = height - strokeWidth/2;
-        }else if (x > width - strokeWidth/2) {
-            centerCircleRectMarkerX = width - strokeWidth/2;
+        }else if (x > rightRect - strokeWidth / 2) {
+            centerCircleRectMarkerX = rightRect - strokeWidth/2;
             centerCircleRectMarkerY = height - strokeWidth/2;
         }else {
             centerCircleRectMarkerX = x;
