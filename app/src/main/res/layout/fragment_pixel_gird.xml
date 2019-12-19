@@ -9,7 +9,8 @@
         android:id="@+id/pixel_gird"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:quantityColumns="7"
-        app:quantityRows="7"/>
+        app:quantityColumns="32"
+        app:quantityRows="32"
+        app:cellSpacing="5"/>
 
 </LinearLayout>

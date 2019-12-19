@@ -21,6 +21,9 @@ public class PixelGird extends View {
 
     private final static String TAG = "PixelGird";
 
+
+
+
     public interface ListenerPixelGird{
         void sendArrayGird(int[][] colorList);
     }
@@ -32,6 +35,8 @@ public class PixelGird extends View {
 
     private int width;
     private int height;
+
+    private int cellSpacing;
 
     private int[][]  colorList;
 
@@ -58,6 +63,7 @@ public class PixelGird extends View {
         try {
             quantityColumns = typedArray.getInteger(R.styleable.PixelGird_quantityColumns, 0);
             quantityRows = typedArray.getInteger(R.styleable.PixelGird_quantityRows, 0);
+            cellSpacing = typedArray.getInteger(R.styleable.PixelGird_cellSpacing,1);
         } finally {
             typedArray.recycle();
         }
@@ -66,7 +72,7 @@ public class PixelGird extends View {
 
         paintRect = new Paint();
         paintRect.setColor(Color.BLACK);
-        paintRect.setStyle(Paint.Style.STROKE);
+        paintRect.setStyle(Paint.Style.FILL);
 
         this.listenerPixelGird = (ListenerPixelGird)context;
 
@@ -94,13 +100,14 @@ public class PixelGird extends View {
         width = quantityColumns * cellSize;
         height = quantityRows * cellSize;
 
-        this.setMeasuredDimension(width, height);
+        setMeasuredDimension(resolveSize(width, widthMeasureSpec),
+                resolveSize(height, heightMeasureSpec));
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawColor(Color.YELLOW);
+        canvas.drawColor(Color.LTGRAY);
         drawField(canvas);
     }
 
@@ -193,24 +200,29 @@ public class PixelGird extends View {
         int bottom = 0;
 
         for (int i = 0; i < quantityRows; i++){
-            top += cellSize;
+            top += cellSize + cellSpacing;
             left = 0 - cellSize;
             right = 0;
-            bottom += cellSize;
+            bottom += cellSize - cellSpacing;
 
             for(int j = 0; j < quantityColumns; j++){
-                left += cellSize;
-                right += cellSize;
+                left += cellSize + cellSpacing;
+                right += cellSize - cellSpacing;
 
                 //color selection
                 if (colorList[i][j] > 0){
-                    paintRect.setStyle(Paint.Style.FILL);
+                    paintRect.setColor(Color.WHITE);
                 }else {
-                    paintRect.setStyle(Paint.Style.STROKE);
+                    paintRect.setColor(Color.BLACK);
                 }
-
                 canvas.drawRect(new Rect(left, top, right, bottom), paintRect);
+
+                left -= cellSpacing;
+                right += cellSpacing;
             }
+
+            top -= cellSpacing;
+            bottom += cellSpacing;
         }
     }
 

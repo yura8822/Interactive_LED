@@ -3,6 +3,7 @@
     <declare-styleable name="PixelGird">
         <attr name="quantityColumns" format="integer" />
         <attr name="quantityRows" format="integer" />
+        <attr name="cellSpacing" format="integer"/>
     </declare-styleable>
 
 </resources>
