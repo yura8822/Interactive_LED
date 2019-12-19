@@ -20,7 +20,7 @@ import com.yura8822.R;
 
 public class ColorPicker extends View {
 
-    private final String TAG = "ColorPicker";
+    private static final String TAG = "ColorPicker";
 
     private final float COEFFICIENT_STROKE_WIDTH = 0.04f;
 
@@ -108,11 +108,13 @@ public class ColorPicker extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
-        this.width = Math.min(width, height);
-        this.height = width + (int) (width * COEFFICIENT_ASPECT_RATIO);
-        setMeasuredDimension(this.width, this.height);
+        int size = Math.min(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec));
+
+        width = size - (int) (size * COEFFICIENT_ASPECT_RATIO);
+        height = size;
+
+        setMeasuredDimension(resolveSize(width, widthMeasureSpec),
+                resolveSize(height, heightMeasureSpec));
 
         calculateSize();
         init();

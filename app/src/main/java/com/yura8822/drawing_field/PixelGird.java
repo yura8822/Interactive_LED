@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -17,6 +18,8 @@ import com.yura8822.R;
 import java.util.Arrays;
 
 public class PixelGird extends View {
+
+    private final static String TAG = "PixelGird";
 
     public interface ListenerPixelGird{
         void sendArrayGird(int[][] colorList);
@@ -72,13 +75,32 @@ public class PixelGird extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        calculateDimensions();
+        int sizeW = MeasureSpec.getSize(widthMeasureSpec);
+        int sizeH = MeasureSpec.getSize(heightMeasureSpec);
+
+        // cell size calculation
+        if (quantityColumns > quantityRows){
+            cellSize = sizeW / quantityColumns;
+            Log.d(TAG, "quantityColumns > quantityRows");
+        }else if (quantityColumns < quantityRows){
+            cellSize = sizeH / quantityRows;
+            Log.d(TAG, "quantityColumns < quantityRows");
+        }else {
+            cellSize = Math.min(sizeW, sizeH) / quantityColumns;
+            Log.d(TAG, "quantityColumns == quantityRows");
+        }
+
+        //calculation of the sides of the screen
+        width = quantityColumns * cellSize;
+        height = quantityRows * cellSize;
+
+        this.setMeasuredDimension(width, height);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        canvas.drawColor(Color.YELLOW);
         drawField(canvas);
     }
 
@@ -161,27 +183,6 @@ public class PixelGird extends View {
                 this.colorList[oldI][oldJ] = 999;
             }
         }
-    }
-
-    private void calculateDimensions(){
-        this.width = getMeasuredWidth();
-        this.height = getMeasuredHeight();
-
-        // cell size calculation
-        int cellSizeWidth = width / quantityColumns;
-        int cellSizeHeight = height / quantityRows;
-
-        if (cellSizeWidth > cellSizeHeight){
-            cellSize = cellSizeHeight;
-        }else {
-            cellSize = cellSizeWidth;
-        }
-
-        // calculation of the sides of the screen
-        width = quantityColumns * cellSize;
-        height = quantityRows * cellSize;
-
-        this.setMeasuredDimension(width, height);
     }
 
     private void drawField(Canvas canvas){
