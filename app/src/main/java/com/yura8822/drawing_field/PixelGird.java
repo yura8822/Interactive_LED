@@ -21,9 +21,6 @@ public class PixelGird extends View {
 
     private final static String TAG = "PixelGird";
 
-
-
-
     public interface ListenerPixelGird{
         void sendArrayGird(int[][] colorList);
     }
@@ -50,7 +47,6 @@ public class PixelGird extends View {
 
     public PixelGird(Context context) {
         super(context);
-        this.listenerPixelGird = (ListenerPixelGird)context;
         previousColorList = new int[quantityRows][quantityColumns];
     }
 
@@ -73,8 +69,6 @@ public class PixelGird extends View {
         paintRect = new Paint();
         paintRect.setColor(Color.BLACK);
         paintRect.setStyle(Paint.Style.FILL);
-
-        this.listenerPixelGird = (ListenerPixelGird)context;
 
         previousColorList = new int[quantityRows][quantityColumns];
     }
@@ -226,19 +220,8 @@ public class PixelGird extends View {
         }
     }
 
-    public int getQuantityColumns() {
-        return quantityColumns;
-    }
-
-    public void setQuantityColumns(int quantityColumns) {
-        this.quantityColumns = quantityColumns;
-    }
-
-    public int getQuantityRows() {
-        return quantityRows;
-    }
-
-    public void setQuantityRows(int quantityRows) {
-        this.quantityRows = quantityRows;
+    public void setListenerPixelGird(ListenerPixelGird listenerPixelGird) {
+        this.listenerPixelGird = listenerPixelGird;
+        Log.d(TAG, "setListenerPixelGird()");
     }
 }

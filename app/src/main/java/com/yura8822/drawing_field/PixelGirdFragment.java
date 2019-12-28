@@ -2,17 +2,27 @@ package com.yura8822.drawing_field;
 
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.yura8822.R;
 
 
 public class PixelGirdFragment extends Fragment {
+    private static final String TAG = "PixelGirdFragment";
+
+    public interface FragmentListenerPixelGird{
+        void sendBluetooth(int[][] colorList);
+    }
+
+    private FragmentListenerPixelGird fragmentListenerPixelGird;
+
+    private PixelGird mPixelGird;
 
     public PixelGirdFragment() {
         // Required empty public constructor
@@ -22,7 +32,26 @@ public class PixelGirdFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pixel_gird, container, false);
+        View view = inflater.inflate(R.layout.fragment_pixel_gird, container, false);
+        mPixelGird = view.findViewById(R.id.pixel_gird);
+        return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mPixelGird.setListenerPixelGird(new PixelGird.ListenerPixelGird() {
+            @Override
+            public void sendArrayGird(int[][] colorList) {
+                if (fragmentListenerPixelGird != null){
+                    fragmentListenerPixelGird.sendBluetooth(colorList);
+                }
+            }
+        });
+    }
+
+    public void setFragmentListenerPixelGird(FragmentListenerPixelGird fragmentListenerPixelGird) {
+        this.fragmentListenerPixelGird = fragmentListenerPixelGird;
+        Log.d(TAG, "setFragmentListenerPixelGird()");
+    }
 }

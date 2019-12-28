@@ -18,9 +18,8 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.tabs.TabLayout;
 import com.yura8822.bluetooth.BluetoothFragment;
 import com.yura8822.drawing_field.PixelGirdFragment;
-import com.yura8822.drawing_field.PixelGird;
 
-public class MainActivity extends AppCompatActivity implements PixelGird.ListenerPixelGird {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
@@ -28,8 +27,8 @@ public class MainActivity extends AppCompatActivity implements PixelGird.Listene
     private BluetoothFragment mBluetoothFragment;
     private PixelGirdFragment mPixelGirdFragment;
 
-    MenuItem mBT_on;
-    MenuItem mBT_disabled;
+    private MenuItem mBT_on;
+    private MenuItem mBT_disabled;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -39,48 +38,28 @@ public class MainActivity extends AppCompatActivity implements PixelGird.Listene
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         mBluetoothFragment = new BluetoothFragment();
         mPixelGirdFragment = new PixelGirdFragment();
+        //registering the listener to send the grid array in case of changes
+        mPixelGirdFragment.setFragmentListenerPixelGird(new PixelGirdFragment.FragmentListenerPixelGird() {
+            @Override
+            public void sendBluetooth(int[][] colorList) {
+                mBluetoothFragment.sendMessage(colorList);
+            }
+        });
 
         FragmentTransaction fm = getSupportFragmentManager().beginTransaction();
         fm.replace(R.id.bluetooth_container, mBluetoothFragment);
         fm.replace(R.id.mode_container, mPixelGirdFragment);
         fm .commit();
 
+        //initializing tablayout to switch modes
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.addTab(tabLayout.newTab().setText("Paint"));
         tabLayout.addTab(tabLayout.newTab().setText("Animation"));
+        tabLayout.addOnTabSelectedListener(tabSelectedListener);
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()){
-                    //test
-                    case 0:
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.mode_container, mPixelGirdFragment).commit();
-                        Log.d(TAG, "replace mPixelGirdFragment");
-                        break;
-                    case 1:
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.mode_container, new Fragment()).commit();
-                        Log.d(TAG, "mode container item 2");
-                        break;
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
+        //register the receiver to determine the status of the bluetooth adapter
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         if (mReceiver != null){
             registerReceiver(mReceiver, filter);
@@ -141,10 +120,33 @@ public class MainActivity extends AppCompatActivity implements PixelGird.Listene
         }
     };
 
-    @Override
-    public void sendArrayGird(int[][] colorList) {
-        mBluetoothFragment.sendMessage(colorList);
-    }
+    TabLayout.BaseOnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
+        @Override
+        public void onTabSelected(TabLayout.Tab tab) {
+            switch (tab.getPosition()){
+                case 0:
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.mode_container, mPixelGirdFragment).commit();
+                    Log.d(TAG, "replace mPixelGirdFragment");
+                    break;
+                case 1:
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.mode_container, new Fragment()).commit();
+                    Log.d(TAG, "mode container item 2");
+                    break;
+            }
+        }
+
+        @Override
+        public void onTabUnselected(TabLayout.Tab tab) {
+
+        }
+
+        @Override
+        public void onTabReselected(TabLayout.Tab tab) {
+
+        }
+    };
 }
 
 
