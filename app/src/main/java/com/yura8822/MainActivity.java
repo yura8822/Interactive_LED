@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.tabs.TabLayout;
 import com.yura8822.bluetooth.BluetoothFragment;
+import com.yura8822.drawing_field.ColorPickerFragment;
 import com.yura8822.drawing_field.PixelGirdFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -53,11 +54,17 @@ public class MainActivity extends AppCompatActivity {
         fm.replace(R.id.mode_container, mPixelGirdFragment);
         fm .commit();
 
-        //initializing tablayout to switch modes
-        TabLayout tabLayout = findViewById(R.id.tabs);
-        tabLayout.addTab(tabLayout.newTab().setText("Paint"));
-        tabLayout.addTab(tabLayout.newTab().setText("Animation"));
-        tabLayout.addOnTabSelectedListener(tabSelectedListener);
+        //initializing main tablayout to switch modes
+        TabLayout tabLayoutMain = findViewById(R.id.tabs_main);
+        tabLayoutMain.addTab(tabLayoutMain.newTab().setText("Paint"));
+        tabLayoutMain.addTab(tabLayoutMain.newTab().setText("Animation"));
+        tabLayoutMain.addOnTabSelectedListener(tabSelectedListenerMain);
+
+        //initializing bottom tablayout to switch modes
+        TabLayout tabLayoutBotom = findViewById(R.id.tabs_bottom);
+        tabLayoutBotom.addTab(tabLayoutBotom.newTab().setText("Color"));
+        tabLayoutBotom.addTab(tabLayoutBotom.newTab().setText("Eraser"));
+        tabLayoutBotom.addOnTabSelectedListener(tabSelectedListenerBottom);
 
         //register the receiver to determine the status of the bluetooth adapter
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
@@ -120,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    TabLayout.BaseOnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
+    private TabLayout.BaseOnTabSelectedListener tabSelectedListenerMain = new TabLayout.OnTabSelectedListener() {
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
             switch (tab.getPosition()){
@@ -145,6 +152,33 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onTabReselected(TabLayout.Tab tab) {
 
+        }
+    };
+
+    private TabLayout.BaseOnTabSelectedListener tabSelectedListenerBottom = new TabLayout.OnTabSelectedListener() {
+        @Override
+        public void onTabSelected(TabLayout.Tab tab) {
+            switch (tab.getPosition()){
+                case 0:
+                    ColorPickerFragment mColorPickerFragment = new ColorPickerFragment();
+                    mColorPickerFragment.show(getSupportFragmentManager(), ColorPickerFragment.DIALOG_COLOR_PICKER);
+                    break;
+            }
+        }
+
+        @Override
+        public void onTabUnselected(TabLayout.Tab tab) {
+
+        }
+
+        @Override
+        public void onTabReselected(TabLayout.Tab tab) {
+            switch (tab.getPosition()){
+                case 0:
+                    ColorPickerFragment mColorPickerFragment = new ColorPickerFragment();
+                    mColorPickerFragment.show(getSupportFragmentManager(), ColorPickerFragment.DIALOG_COLOR_PICKER);
+                    break;
+            }
         }
     };
 }

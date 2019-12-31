@@ -123,7 +123,6 @@ public class ColorPicker extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawColor(Color.LTGRAY);
         //outer circle
         canvas.drawCircle(centerCircleX, centerCircleY, radiusOuterCircle, paintOuterCircle);
         //inner circle
