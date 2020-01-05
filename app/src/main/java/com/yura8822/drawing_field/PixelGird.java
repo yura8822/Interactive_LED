@@ -43,11 +43,12 @@ public class PixelGird extends View {
 
     private Paint paintRect;
 
+    private int color;
+
 
 
     public PixelGird(Context context) {
         super(context);
-        previousColorList = new int[quantityRows][quantityColumns];
     }
 
     public PixelGird(Context context, @Nullable AttributeSet attrs) {
@@ -65,12 +66,15 @@ public class PixelGird extends View {
         }
 
         colorList = new int[quantityRows][quantityColumns];
+        initArrayColor(colorList);
+        previousColorList = new int[quantityRows][quantityColumns];
+        initArrayColor(previousColorList);
 
+        color = Color.BLACK;
         paintRect = new Paint();
-        paintRect.setColor(Color.BLACK);
+        paintRect.setColor(color);
         paintRect.setStyle(Paint.Style.FILL);
 
-        previousColorList = new int[quantityRows][quantityColumns];
     }
 
     @Override
@@ -101,7 +105,6 @@ public class PixelGird extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawColor(Color.LTGRAY);
         drawField(canvas);
     }
 
@@ -116,7 +119,7 @@ public class PixelGird extends View {
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:{
                 if (checkCoordinates(currentTouchI, currentTouchJ)){
-                    this.colorList[currentTouchI][currentTouchJ] = 999;
+                    this.colorList[currentTouchI][currentTouchJ] = color;
                 }
 
                 lastTouchI = currentTouchI;
@@ -181,7 +184,7 @@ public class PixelGird extends View {
             else if (oldJ < currentJ) oldJ++;
 
             if (checkCoordinates(oldI, oldJ)){
-                this.colorList[oldI][oldJ] = 999;
+                this.colorList[oldI][oldJ] = color;
             }
         }
     }
@@ -204,11 +207,7 @@ public class PixelGird extends View {
                 right += cellSize - cellSpacing;
 
                 //color selection
-                if (colorList[i][j] > 0){
-                    paintRect.setColor(Color.WHITE);
-                }else {
-                    paintRect.setColor(Color.BLACK);
-                }
+                paintRect.setColor(colorList[i][j]);
                 canvas.drawRect(new Rect(left, top, right, bottom), paintRect);
 
                 left -= cellSpacing;
@@ -220,8 +219,20 @@ public class PixelGird extends View {
         }
     }
 
+    private void initArrayColor(int[][] arrayColor){
+        for (int i = 0; i < arrayColor.length; i++){
+            for (int j = 0; j < arrayColor[i].length; j++){
+                arrayColor[i][j] = Color.BLACK;
+            }
+        }
+    }
+
     public void setListenerPixelGird(ListenerPixelGird listenerPixelGird) {
         this.listenerPixelGird = listenerPixelGird;
         Log.d(TAG, "setListenerPixelGird()");
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 }

@@ -54,4 +54,8 @@ public class PixelGirdFragment extends Fragment {
         this.fragmentListenerPixelGird = fragmentListenerPixelGird;
         Log.d(TAG, "setFragmentListenerPixelGird()");
     }
+
+    public void setColor(int color){
+        mPixelGird.setColor(color);
+    }
 }

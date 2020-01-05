@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private BluetoothFragment mBluetoothFragment;
     private PixelGirdFragment mPixelGirdFragment;
+    private ColorPickerFragment mColorPickerFragment;
 
     private MenuItem mBT_on;
     private MenuItem mBT_disabled;
@@ -46,6 +47,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void sendBluetooth(int[][] colorList) {
                 mBluetoothFragment.sendMessage(colorList);
+            }
+        });
+        mColorPickerFragment = new ColorPickerFragment();
+        //listener registration for color selection
+        mColorPickerFragment.setFragmentListenerColorPicker(new ColorPickerFragment.FragmentListenerColorPicker() {
+            @Override
+            public void fragmentColorSelected(int color) {
+                mPixelGirdFragment.setColor(color);
+                Log.d(TAG, "selected color = " + String.valueOf(color));
             }
         });
 
@@ -160,7 +170,6 @@ public class MainActivity extends AppCompatActivity {
         public void onTabSelected(TabLayout.Tab tab) {
             switch (tab.getPosition()){
                 case 0:
-                    ColorPickerFragment mColorPickerFragment = new ColorPickerFragment();
                     mColorPickerFragment.show(getSupportFragmentManager(), ColorPickerFragment.DIALOG_COLOR_PICKER);
                     break;
             }
@@ -175,7 +184,6 @@ public class MainActivity extends AppCompatActivity {
         public void onTabReselected(TabLayout.Tab tab) {
             switch (tab.getPosition()){
                 case 0:
-                    ColorPickerFragment mColorPickerFragment = new ColorPickerFragment();
                     mColorPickerFragment.show(getSupportFragmentManager(), ColorPickerFragment.DIALOG_COLOR_PICKER);
                     break;
             }

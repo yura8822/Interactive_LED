@@ -22,6 +22,12 @@ public class ColorPicker extends View {
 
     private static final String TAG = "ColorPicker";
 
+    public interface ListenerColorPicker{
+        void colorSelected(int color);
+    }
+
+    private ListenerColorPicker listenerColorPicker;
+
     private final float COEFFICIENT_STROKE_WIDTH = 0.04f;
 
     private final float COEFFICIENT_RADIUS_OUTER_CIRCLE = 0.43f;
@@ -296,6 +302,12 @@ public class ColorPicker extends View {
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 selectedCircle =  determineSelectedFigure(event.getX(), event.getY());
+                if (selectedCircle == RESULT_CIRCLE){
+                    if (listenerColorPicker != null){
+                        listenerColorPicker.colorSelected(resultColor);
+                        Log.d(TAG, "listenerColorPicker.colorSelected(resultColor)");
+                    }
+                }
                 return true;
 
             case MotionEvent.ACTION_MOVE:
@@ -313,9 +325,6 @@ public class ColorPicker extends View {
                     case BRIGHTNESS_RECT:
                         getColorBrightnessRect(x);
                         moveRectMarker(x);
-                        break;
-
-                    case RESULT_CIRCLE:
                         break;
                 }
 
@@ -351,8 +360,6 @@ public class ColorPicker extends View {
         }
         return 0;
     }
-
-
 
     private void getColorOuterCircle(float angle){
         hsv[0] = angle;
@@ -442,6 +449,14 @@ public class ColorPicker extends View {
             centerCircleRectMarkerX = x;
             centerCircleRectMarkerY = height - strokeWidth/2;
         }
+    }
+
+    public void setListenerColorPicker(ListenerColorPicker listenerColorPicker) {
+        this.listenerColorPicker = listenerColorPicker;
+    }
+
+    public int getResultColor() {
+        return resultColor;
     }
 }
 
