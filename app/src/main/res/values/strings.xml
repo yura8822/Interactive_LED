@@ -29,6 +29,7 @@
     <string name="hue">Цветовой тон</string>
     <string name="saturation">Насыщенность</string>
     <string name="value">Яркость</string>
+    <string name="color_picker">Палитра цветов</string>
 
     <!--    ColorPickerFragment-->
     <string name="ok">Выбрать</string>

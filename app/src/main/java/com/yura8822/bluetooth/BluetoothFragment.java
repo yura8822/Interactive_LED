@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -147,19 +148,12 @@ public class BluetoothFragment extends Fragment {
 
         for (int i = 0; i < colorList.length; i++){
             for(int j = 0; j < colorList[i].length; j++){
-                if (colorList[i][j] == 0){
-                    resultArray[++index] = (byte)1;
-                    resultArray[++index] = (byte)1;
-                    resultArray[++index] = (byte)1;
-                }else {
-                    resultArray[++index] = (byte)200;
-                    resultArray[++index] = (byte)150;
-                    resultArray[++index] = (byte)100;
-                }
+                resultArray[++index] = (byte) Color.red(colorList[i][j]);
+                resultArray[++index] = (byte) Color.green(colorList[i][j]);
+                resultArray[++index] = (byte) Color.blue(colorList[i][j]);
             }
         }
         resultArray[++index] = (byte) 112;
-
         mBTService.write(resultArray);
     }
 

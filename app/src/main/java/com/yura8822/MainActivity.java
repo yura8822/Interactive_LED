@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -72,8 +73,9 @@ public class MainActivity extends AppCompatActivity {
 
         //initializing bottom tablayout to switch modes
         TabLayout tabLayoutBotom = findViewById(R.id.tabs_bottom);
-        tabLayoutBotom.addTab(tabLayoutBotom.newTab().setText("Color"));
-        tabLayoutBotom.addTab(tabLayoutBotom.newTab().setText("Eraser"));
+        tabLayoutBotom.addTab(tabLayoutBotom.newTab().setIcon(R.drawable.baseline_color_lens_black_18dp));
+        tabLayoutBotom.addTab(tabLayoutBotom.newTab().setIcon(R.drawable.eraser));
+        tabLayoutBotom.addTab(tabLayoutBotom.newTab().setIcon(R.drawable.baseline_format_color_reset_black_18dp));
         tabLayoutBotom.addOnTabSelectedListener(tabSelectedListenerBottom);
 
         //register the receiver to determine the status of the bluetooth adapter
@@ -172,6 +174,12 @@ public class MainActivity extends AppCompatActivity {
                 case 0:
                     mColorPickerFragment.show(getSupportFragmentManager(), ColorPickerFragment.DIALOG_COLOR_PICKER);
                     break;
+                case 1:
+                    mPixelGirdFragment.setColor(Color.BLACK);
+                    break;
+                case 2:
+                    mPixelGirdFragment.resetPaint();
+                    break;
             }
         }
 
@@ -185,6 +193,12 @@ public class MainActivity extends AppCompatActivity {
             switch (tab.getPosition()){
                 case 0:
                     mColorPickerFragment.show(getSupportFragmentManager(), ColorPickerFragment.DIALOG_COLOR_PICKER);
+                    break;
+                case 1:
+                    mPixelGirdFragment.setColor(Color.BLACK);
+                    break;
+                case 2:
+                    mPixelGirdFragment.resetPaint();
                     break;
             }
         }

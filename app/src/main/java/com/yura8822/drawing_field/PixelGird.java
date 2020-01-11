@@ -235,4 +235,14 @@ public class PixelGird extends View {
     public void setColor(int color) {
         this.color = color;
     }
+
+    //fill the array with black
+    public void resetColorList(){
+        initArrayColor(colorList);
+        initArrayColor(previousColorList);
+        if (listenerPixelGird != null) {
+            listenerPixelGird.sendArrayGird(colorList);
+        }
+        invalidate();
+    }
 }

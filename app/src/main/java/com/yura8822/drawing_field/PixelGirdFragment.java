@@ -58,4 +58,9 @@ public class PixelGirdFragment extends Fragment {
     public void setColor(int color){
         mPixelGird.setColor(color);
     }
+
+    //clear canvas
+    public void resetPaint(){
+        mPixelGird.resetColorList();
+    }
 }
