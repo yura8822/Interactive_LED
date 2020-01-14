@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mBluetoothFragment = new BluetoothFragment();
+
         mPixelGirdFragment = new PixelGirdFragment();
         //registering the listener to send the grid array in case of changes
         mPixelGirdFragment.setFragmentListenerPixelGird(new PixelGirdFragment.FragmentListenerPixelGird() {
@@ -93,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
             unregisterReceiver(mReceiver);
             Log.d(TAG, "unregister receiver");
         }
+        //Stop all threads
+        mBluetoothFragment.stop();
     }
 
     @Override
