@@ -142,7 +142,7 @@ public class BluetoothFragment extends Fragment {
         }
 
         // Check that there's actually something to send
-        byte[] resultArray = new byte[149];
+        byte[] resultArray = new byte[677];
         int index = 0;
         resultArray[index] = (byte)111;
 

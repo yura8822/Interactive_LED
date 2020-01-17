@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.tabs.TabLayout;
 import com.yura8822.bluetooth.BluetoothFragment;
 import com.yura8822.drawing_field.ColorPickerFragment;
+import com.yura8822.drawing_field.PaletteLastColorsFragment;
 import com.yura8822.drawing_field.PixelGirdFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothFragment mBluetoothFragment;
     private PixelGirdFragment mPixelGirdFragment;
     private ColorPickerFragment mColorPickerFragment;
+    private PaletteLastColorsFragment mPaletteLastColorsFragment;
 
     private MenuItem mBT_on;
     private MenuItem mBT_disabled;
@@ -51,19 +53,33 @@ public class MainActivity extends AppCompatActivity {
                 mBluetoothFragment.sendMessage(colorList);
             }
         });
+
         mColorPickerFragment = new ColorPickerFragment();
         //listener registration for color selection
         mColorPickerFragment.setFragmentListenerColorPicker(new ColorPickerFragment.FragmentListenerColorPicker() {
             @Override
             public void fragmentColorSelected(int color) {
+                //set painting color
                 mPixelGirdFragment.setColor(color);
+                //set color to PaletteLastColor
+                mPaletteLastColorsFragment.updatePaletteLastColors(color);
                 Log.d(TAG, "selected color = " + String.valueOf(color));
+            }
+        });
+
+        mPaletteLastColorsFragment = new PaletteLastColorsFragment();
+        ////listener registration for palette colors
+        mPaletteLastColorsFragment.setFragmentListenerPaletteLastColors(new PaletteLastColorsFragment.FragmentListenerPaletteLastColors() {
+            @Override
+            public void setColorPainting(int color) {
+                mPixelGirdFragment.setColor(color);
             }
         });
 
         FragmentTransaction fm = getSupportFragmentManager().beginTransaction();
         fm.replace(R.id.bluetooth_container, mBluetoothFragment);
         fm.replace(R.id.mode_container, mPixelGirdFragment);
+        fm.replace(R.id.last_color_container, mPaletteLastColorsFragment);
         fm .commit();
 
         //initializing main tablayout to switch modes
