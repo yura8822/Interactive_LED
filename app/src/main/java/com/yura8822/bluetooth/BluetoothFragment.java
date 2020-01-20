@@ -283,6 +283,8 @@ public class BluetoothFragment extends Fragment {
 
     //Stop all threads
     public void stop(){
-        mBTService.stop();
+        if (mBTService != null){
+            mBTService.stop();
+        }
     }
 }

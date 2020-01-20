@@ -39,6 +39,9 @@ public class PaletteLastColors extends View {
     private Paint paintRect;
     private Paint paintRectBorder;
 
+    private RectF mRectFCell;
+    private RectF mRectFCellBorder;
+
     private int color;
 
     private int[][]colorList;
@@ -113,6 +116,10 @@ public class PaletteLastColors extends View {
 
         //initialize the array with colors
         initArray();
+
+        //init rect cell
+        mRectFCell = new RectF();
+        mRectFCellBorder = new RectF();
     }
 
     @Override
@@ -169,11 +176,20 @@ public class PaletteLastColors extends View {
 
                 //color selection
                 paintRect.setColor(colorList[i][j]);
-                canvas.drawRoundRect(new RectF(left, top, right, bottom), cellSize/5,
+
+                mRectFCell.left = left;
+                mRectFCell.top = top;
+                mRectFCell.right = right;
+                mRectFCell.bottom = bottom;
+                canvas.drawRoundRect(mRectFCell, cellSize/5,
                         cellSize/5, paintRect);
 
                 //draw border cell
-                canvas.drawRoundRect(new RectF(left, top, right, bottom), cellSize/5,
+                mRectFCellBorder.left = left;
+                mRectFCellBorder.top = top;
+                mRectFCellBorder.right = right;
+                mRectFCellBorder.bottom = bottom;
+                canvas.drawRoundRect(mRectFCellBorder, cellSize/5,
                         cellSize/5, paintRectBorder);
 
                 left -= cellSpacingPL;

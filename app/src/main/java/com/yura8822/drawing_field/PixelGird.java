@@ -36,16 +36,15 @@ public class PixelGird extends View {
     private int cellSpacing;
 
     private int[][]  colorList;
-
     private int[][] previousColorList;
 
     private int cellSize;
 
     private Paint paintRect;
 
+    private Rect mRectCell;
+
     private int color;
-
-
 
     public PixelGird(Context context) {
         super(context);
@@ -64,17 +63,6 @@ public class PixelGird extends View {
         } finally {
             typedArray.recycle();
         }
-
-        colorList = new int[quantityRows][quantityColumns];
-        initArrayColor(colorList);
-        previousColorList = new int[quantityRows][quantityColumns];
-        initArrayColor(previousColorList);
-
-        color = Color.BLACK;
-        paintRect = new Paint();
-        paintRect.setColor(color);
-        paintRect.setStyle(Paint.Style.FILL);
-
     }
 
     @Override
@@ -85,13 +73,15 @@ public class PixelGird extends View {
         // cell size calculation
         if (quantityColumns > quantityRows){
             cellSize = sizeW / quantityColumns;
-            Log.d(TAG, "quantityColumns > quantityRows");
+            if (quantityRows * cellSize > sizeH) cellSize = sizeH / quantityColumns;
+            Log.d(TAG, "quantityColumnsPL > quantityRowsPL");
         }else if (quantityColumns < quantityRows){
             cellSize = sizeH / quantityRows;
-            Log.d(TAG, "quantityColumns < quantityRows");
+            if (quantityColumns * cellSize > sizeW) cellSize = sizeW / quantityColumns;
+            Log.d(TAG, "quantityColumnsPL < quantityRowsPL");
         }else {
             cellSize = Math.min(sizeW, sizeH) / quantityColumns;
-            Log.d(TAG, "quantityColumns == quantityRows");
+            Log.d(TAG, "quantityColumnsPL == quantityRowsPL");
         }
 
         //calculation of the sides of the screen
@@ -100,12 +90,30 @@ public class PixelGird extends View {
 
         setMeasuredDimension(resolveSize(width, widthMeasureSpec),
                 resolveSize(height, heightMeasureSpec));
+
+        init();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         drawField(canvas);
+    }
+
+    private void init(){
+        // init array color list
+        colorList = new int[quantityRows][quantityColumns];
+        initArrayColor(colorList);
+        previousColorList = new int[quantityRows][quantityColumns];
+        initArrayColor(previousColorList);
+
+        //init paint
+        color = Color.BLACK;
+        paintRect = new Paint();
+        paintRect.setColor(color);
+        paintRect.setStyle(Paint.Style.FILL);
+
+        mRectCell = new Rect();
     }
 
     private int lastTouchI;
@@ -208,7 +216,11 @@ public class PixelGird extends View {
 
                 //color selection
                 paintRect.setColor(colorList[i][j]);
-                canvas.drawRect(new Rect(left, top, right, bottom), paintRect);
+                mRectCell.left = left;
+                mRectCell.top = top;
+                mRectCell.right = right;
+                mRectCell.bottom = bottom;
+                canvas.drawRect(mRectCell, paintRect);
 
                 left -= cellSpacing;
                 right += cellSpacing;
