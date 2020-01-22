@@ -32,15 +32,20 @@ public class PaletteLastColors extends View {
     private int width;
     private int height;
 
+    private int touchX;
+    private int touchY;
+
     private int cellSpacingPL;
 
     private int cellSize;
 
     private Paint paintRect;
     private Paint paintRectBorder;
+    private Paint paintRectTouch;
 
     private RectF mRectFCell;
     private RectF mRectFCellBorder;
+    private RectF mRectFTouch;
 
     private int color;
 
@@ -114,12 +119,22 @@ public class PaletteLastColors extends View {
         paintRectBorder.setColor(Color.BLACK);
         paintRectBorder.setStrokeWidth(cellSize/20);
 
+        //init paint for touch
+        paintRectTouch = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paintRectTouch.setStyle(Paint.Style.STROKE);
+        paintRectTouch.setColor(Color.GRAY);
+        paintRectTouch.setStrokeWidth(cellSize/7);
+
         //initialize the array with colors
         initArray();
 
         //init rect cell
         mRectFCell = new RectF();
         mRectFCellBorder = new RectF();
+        mRectFTouch = new RectF();
+
+        touchX = -1;
+        touchY = -1;
     }
 
     @Override
@@ -129,20 +144,31 @@ public class PaletteLastColors extends View {
 
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:{
+                Log.d(TAG, "action_down");
                 if (checkCoordinates(currentTouchI, currentTouchJ)){
+                    //determine touch coordinates
+                    touchX = currentTouchJ;
+                    touchY = currentTouchI;
+
                     //define the selected cell, and set the value of the argument of the interface method
                     int color = colorList[currentTouchI][currentTouchJ];
                     mListenerPaletteLastColors.selectColor(color);
                 }
-
+                invalidate();
                 return true;
             }
 
             case MotionEvent.ACTION_MOVE: {
+                break;
             }
 
             case MotionEvent.ACTION_UP:{
-                break;
+                Log.d(TAG, "action_up");
+                //remove the selection from the cell
+                touchX = -1;
+                touchY = -1;
+                invalidate();
+                return true;
             }
         }
 
@@ -191,6 +217,16 @@ public class PaletteLastColors extends View {
                 mRectFCellBorder.bottom = bottom;
                 canvas.drawRoundRect(mRectFCellBorder, cellSize/5,
                         cellSize/5, paintRectBorder);
+
+                //draw touch
+                if (touchY == i && touchX == j){
+                    mRectFTouch.left = left;
+                    mRectFTouch.top = top;
+                    mRectFTouch.right = right;
+                    mRectFTouch.bottom = bottom;
+                    canvas.drawRoundRect(mRectFTouch, cellSize/5,
+                            cellSize/5, paintRectTouch);
+                }
 
                 left -= cellSpacingPL;
                 right += cellSpacingPL;

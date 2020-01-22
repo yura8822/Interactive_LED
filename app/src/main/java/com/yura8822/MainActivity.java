@@ -10,7 +10,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -35,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem mBT_on;
     private MenuItem mBT_disabled;
 
+    private ImageView mImageViewCurrentColor;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +46,14 @@ public class MainActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //disable toolbar title
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null){
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
+        //initialize the view to determine the current color
+        mImageViewCurrentColor = findViewById(R.id.image_current_color);
 
         mBluetoothFragment = new BluetoothFragment();
 
@@ -63,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
                 mPixelGirdFragment.setColor(color);
                 //set color to PaletteLastColor
                 mPaletteLastColorsFragment.updatePaletteLastColors(color);
+                //display selected color in toolbar
+                mImageViewCurrentColor.setColorFilter(color);
                 Log.d(TAG, "selected color = " + String.valueOf(color));
             }
         });
@@ -73,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void setColorPainting(int color) {
                 mPixelGirdFragment.setColor(color);
+                //display selected color in toolbar
+                mImageViewCurrentColor.setColorFilter(color);
             }
         });
 
@@ -195,6 +211,8 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 1:
                     mPixelGirdFragment.setColor(Color.BLACK);
+                    //display selected color in toolbar
+                    mImageViewCurrentColor.setColorFilter(Color.BLACK);
                     break;
                 case 2:
                     mPixelGirdFragment.resetPaint();
@@ -215,6 +233,8 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 1:
                     mPixelGirdFragment.setColor(Color.BLACK);
+                    //display selected color in toolbar
+                    mImageViewCurrentColor.setColorFilter(Color.BLACK);
                     break;
                 case 2:
                     mPixelGirdFragment.resetPaint();

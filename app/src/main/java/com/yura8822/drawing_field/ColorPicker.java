@@ -28,13 +28,13 @@ public class ColorPicker extends View {
 
     private ListenerColorPicker listenerColorPicker;
 
-    private final float COEFFICIENT_STROKE_WIDTH = 0.04f;
+    private final float COEFFICIENT_STROKE_WIDTH = 0.051f;
 
-    private final float COEFFICIENT_RADIUS_OUTER_CIRCLE = 0.43f;
+    private final float COEFFICIENT_RADIUS_OUTER_CIRCLE = 0.44f;
     private final float COEFFICIENT_RADIUS_INNER_CIRCLE = 0.28f;
-    private final float COEFFICIENT_RADIUS_RESULT_CIRCLE = 0.13f;
+    private final float COEFFICIENT_RADIUS_RESULT_CIRCLE = 0.12f;
 
-    private final float COEFFICIENT_ASPECT_RATIO = 0.1f;
+    private final float COEFFICIENT_ASPECT_RATIO = 0.12f;
 
     private final int OUTER_CIRCLE = 1;
     private final int INNER_CIRCLE = 2;
