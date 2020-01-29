@@ -23,6 +23,7 @@
     <string name="bluetooth_connected">Соединен</string>
     <string name="bluetooth_disabled">Bluetooth выключен</string>
     <string name="device_list">Найти устройства</string>
+    <string name="gallery_image">Галерея</string>
 
     <!--    ColorPicker-->
     <string name="select">Выбрать</string>

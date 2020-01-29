@@ -25,4 +25,9 @@
         android:icon="@drawable/baseline_search_black_18dp"
         android:orderInCategory="5"
         app:showAsAction="never" />
+
+    <item android:id="@+id/gallery_image"
+        android:title="@string/gallery_image"
+        android:orderInCategory="6"
+        app:showAsAction="never"/>
 </menu>

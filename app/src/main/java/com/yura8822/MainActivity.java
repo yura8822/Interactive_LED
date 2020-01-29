@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -23,6 +24,7 @@ import com.yura8822.bluetooth.BluetoothFragment;
 import com.yura8822.drawing_field.ColorPickerFragment;
 import com.yura8822.drawing_field.PaletteLastColorsFragment;
 import com.yura8822.drawing_field.PixelGirdFragment;
+import com.yura8822.gallery.GalleryImageActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -149,6 +151,16 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.gallery_image:
+                Intent intent = new Intent(MainActivity.this, GalleryImageActivity.class);
+                startActivity(intent);
+                return true;
+        }
+        return false;
+    }
 
     // BroadcastReceiver that listens for bluetooth adapter status
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
