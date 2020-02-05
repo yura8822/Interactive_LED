@@ -2,12 +2,22 @@ package com.yura8822.gallery;
 
 public class Image {
 
+    private long id;
     private String name;
     private String image;
 
-    public Image(String name, String image) {
+    public Image(long id, String name, String image) {
+        this.id = id;
         this.name = name;
         this.image = image;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {

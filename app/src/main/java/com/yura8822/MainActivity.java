@@ -25,6 +25,8 @@ import com.yura8822.drawing_field.ColorPickerFragment;
 import com.yura8822.drawing_field.PaletteLastColorsFragment;
 import com.yura8822.drawing_field.PixelGirdFragment;
 import com.yura8822.gallery.GalleryImageActivity;
+import com.yura8822.gallery.ImageUtils;
+import com.yura8822.gallery.SaveImageFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private PixelGirdFragment mPixelGirdFragment;
     private ColorPickerFragment mColorPickerFragment;
     private PaletteLastColorsFragment mPaletteLastColorsFragment;
+    private SaveImageFragment mSaveImageFragment;
 
     private MenuItem mBT_on;
     private MenuItem mBT_disabled;
@@ -91,6 +94,16 @@ public class MainActivity extends AppCompatActivity {
                 mPixelGirdFragment.setColor(color);
                 //display selected color in toolbar
                 mImageViewCurrentColor.setColorFilter(color);
+            }
+        });
+
+        mSaveImageFragment = new SaveImageFragment();
+        //listener registration for generate image
+        mSaveImageFragment.setGenerateImage(new SaveImageFragment.GenerateImage() {
+            @Override
+            public void setViewForGenerateImage(ImageView imageView) {
+                //set image from pixelGird in saveImageDialog
+                imageView.setImageBitmap(ImageUtils.createBitmapFromView(mPixelGirdFragment.getPixelGird()));
             }
         });
 
@@ -157,6 +170,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.gallery_image:
                 Intent intent = new Intent(MainActivity.this, GalleryImageActivity.class);
                 startActivity(intent);
+                return true;
+
+            case R.id.save_image_menu:
+                mSaveImageFragment.show(getSupportFragmentManager(), SaveImageFragment.DIALOG_SAVE_IMAGE);
                 return true;
         }
         return false;

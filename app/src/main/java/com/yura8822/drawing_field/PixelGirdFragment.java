@@ -63,4 +63,8 @@ public class PixelGirdFragment extends Fragment {
     public void resetPaint(){
         mPixelGird.resetColorList();
     }
+
+    public PixelGird getPixelGird() {
+        return mPixelGird;
+    }
 }

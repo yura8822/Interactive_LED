@@ -30,4 +30,10 @@
         android:title="@string/gallery_image"
         android:orderInCategory="6"
         app:showAsAction="never"/>
+
+    <item android:id="@+id/save_image_menu"
+        android:title="@string/save"
+        android:orderInCategory="7"
+        app:showAsAction="never"/>
+
 </menu>
