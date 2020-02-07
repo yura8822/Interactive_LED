@@ -53,7 +53,7 @@ public class GalleryImageActivity extends AppCompatActivity {
             db.close();
             cursor.close();
         }catch (SQLiteException e){
-            Log.e(TAG, "sql lite error");
+            Log.e(TAG, "sql read error");
         }
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view_galerry);

@@ -69,6 +69,8 @@ public class PaletteLastColors extends View {
         } finally {
             typedArray.recycle();
         }
+
+        init();
     }
 
     @Override
@@ -97,7 +99,10 @@ public class PaletteLastColors extends View {
         setMeasuredDimension(resolveSize(width, widthMeasureSpec),
                 resolveSize(height, heightMeasureSpec));
 
-        init();
+        //calculate stroke width for cell border
+        paintRectBorder.setStrokeWidth(cellSize/20);
+        //calculate stroke width for touch
+        paintRectTouch.setStrokeWidth(cellSize/7);
     }
 
     @Override
@@ -113,17 +118,15 @@ public class PaletteLastColors extends View {
         paintRect = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintRect.setStyle(Paint.Style.FILL_AND_STROKE);
 
-        //init paint for cell boarder
+        //init paint for cell border
         paintRectBorder = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintRectBorder.setStyle(Paint.Style.STROKE);
         paintRectBorder.setColor(Color.BLACK);
-        paintRectBorder.setStrokeWidth(cellSize/20);
 
         //init paint for touch
         paintRectTouch = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintRectTouch.setStyle(Paint.Style.STROKE);
         paintRectTouch.setColor(Color.GRAY);
-        paintRectTouch.setStrokeWidth(cellSize/7);
 
         //initialize the array with colors
         initArray();
@@ -135,6 +138,7 @@ public class PaletteLastColors extends View {
 
         touchX = -1;
         touchY = -1;
+        Log.d(TAG, "init()");
     }
 
     @Override

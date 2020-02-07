@@ -63,6 +63,8 @@ public class PixelGird extends View {
         } finally {
             typedArray.recycle();
         }
+
+        init();
     }
 
     @Override
@@ -91,7 +93,6 @@ public class PixelGird extends View {
         setMeasuredDimension(resolveSize(width, widthMeasureSpec),
                 resolveSize(height, heightMeasureSpec));
 
-        init();
     }
 
     @Override
@@ -114,6 +115,7 @@ public class PixelGird extends View {
         paintRect.setStyle(Paint.Style.FILL);
 
         mRectCell = new Rect();
+        Log.d(TAG, "init()");
     }
 
     private int lastTouchI;
