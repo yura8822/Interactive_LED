@@ -85,7 +85,7 @@ public class PaletteLastColors extends View {
             Log.d(TAG, "quantityColumnsPL > quantityRowsPL");
         }else if (quantityColumnsPL < quantityRowsPL){
             cellSize = sizeH / quantityRowsPL;
-            if (quantityColumnsPL * cellSize > sizeW) cellSize = sizeW / quantityColumnsPL;
+            if (quantityColumnsPL * cellSize > sizeW) cellSize = sizeW / quantityRowsPL;
             Log.d(TAG, "quantityColumnsPL < quantityRowsPL");
         }else {
             cellSize = Math.min(sizeW, sizeH) / quantityColumnsPL;

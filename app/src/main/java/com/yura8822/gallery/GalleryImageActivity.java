@@ -50,8 +50,8 @@ public class GalleryImageActivity extends AppCompatActivity {
                 cursor.moveToNext();
             }
 
-            db.close();
             cursor.close();
+            db.close();
         }catch (SQLiteException e){
             Log.e(TAG, "sql read error");
         }
@@ -63,9 +63,8 @@ public class GalleryImageActivity extends AppCompatActivity {
         // use a linear layout manager
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(gridLayoutManager);
-
         // specify an adapter
-        GalleryImageAdapter galleryImageAdapter = new GalleryImageAdapter(names, images);
+        GalleryImageAdapter galleryImageAdapter = new GalleryImageAdapter(names, images, this);
         recyclerView.setAdapter(galleryImageAdapter);
     }
 }

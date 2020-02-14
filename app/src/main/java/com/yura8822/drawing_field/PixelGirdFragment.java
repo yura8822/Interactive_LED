@@ -67,4 +67,8 @@ public class PixelGirdFragment extends Fragment {
     public PixelGird getPixelGird() {
         return mPixelGird;
     }
+
+    public int[][] getArrayPixelGird(){
+        return mPixelGird.getColorList();
+    }
 }

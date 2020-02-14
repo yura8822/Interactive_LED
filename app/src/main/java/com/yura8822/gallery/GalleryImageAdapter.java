@@ -1,8 +1,10 @@
 package com.yura8822.gallery;
 
-import android.content.pm.LabeledIntent;
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,12 +16,17 @@ import com.yura8822.R;
 public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapter.MyViewHolder> {
     private static final String TAG = "GalleryImageAdapter";
 
+    private TextView mTextViewName;
+    private ImageView mImageView;
+    private Context mContext;
+
     private String[] names;
     private String[] images;
 
-    public GalleryImageAdapter(String[] names, String[] images){
+    public GalleryImageAdapter(String[] names, String[] images, Context context){
         this.names = names;
         this.images = images;
+        this.mContext = context;
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -35,18 +42,19 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         CardView cardView = (CardView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.card_image_gallery, parent, false);
+                .inflate(R.layout.card_image_item, parent, false);
         return new MyViewHolder(cardView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         CardView cardView = holder.mCardView;
-        TextView textViewName = cardView.findViewById(R.id.text_view_name);
-        TextView textViewImage = cardView.findViewById(R.id.text_view_image);
+        mTextViewName = cardView.findViewById(R.id.text_view_name);
+        mImageView = cardView.findViewById(R.id.view_image);
 
-        textViewName.setText(names[position]);
-        textViewImage.setText(images[position]);
+        mTextViewName.setText(names[position]);
+        Drawable drawable = ImageUtils.StringToDrawble(mContext, images[position]);
+        mImageView.setImageDrawable(drawable);
     }
 
     @Override

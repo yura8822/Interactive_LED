@@ -32,11 +32,11 @@
     <string name="value">Яркость</string>
     <string name="color_picker">Палитра цветов</string>
 
-    <!--    ColorPickerFragment-->
+    <!--    ColorPickerDialog-->
     <string name="ok">Выбрать</string>
     <string name="cancel">Назад</string>
 
-<!--    SaveImageFragment-->
+<!--    SaveImageDialog-->
     <string name="hint_edit_text_save_image">Введите название</string>
     <string name="save">Сохранить</string>
     <string name="save_image">Сохранить изображение</string>

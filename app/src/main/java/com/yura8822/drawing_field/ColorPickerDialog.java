@@ -15,8 +15,8 @@ import androidx.fragment.app.DialogFragment;
 
 import com.yura8822.R;
 
-public class ColorPickerFragment extends DialogFragment {
-    private final static String TAG = "ColorPickerFragment";
+public class ColorPickerDialog extends DialogFragment {
+    private final static String TAG = "ColorPickerDialog";
 
     public final static String DIALOG_COLOR_PICKER = "color_picker";
 
@@ -28,7 +28,7 @@ public class ColorPickerFragment extends DialogFragment {
 
     private ColorPicker mColorPicker;
 
-    public ColorPickerFragment() {
+    public ColorPickerDialog() {
     }
 
     @NonNull
@@ -65,7 +65,7 @@ public class ColorPickerFragment extends DialogFragment {
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        ColorPickerFragment.this.getDialog().cancel();
+                        ColorPickerDialog.this.getDialog().cancel();
                     }
                 });
         Log.d(TAG, " onCreateDialog()");
@@ -79,7 +79,7 @@ public class ColorPickerFragment extends DialogFragment {
                 fragmentListenerColorPicker.fragmentColorSelected(color);
                 Log.d(TAG, "colorSelected() -> " + String.valueOf(color));
             }
-            ColorPickerFragment.this.getDialog().cancel();
+            ColorPickerDialog.this.getDialog().cancel();
         }
     };
 

@@ -18,8 +18,11 @@ import androidx.fragment.app.DialogFragment;
 
 import com.yura8822.R;
 
-public class SaveImageFragment extends DialogFragment {
-    private static final String TAG = "SaveImageFragment";
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class SaveImageDialog extends DialogFragment {
+    private static final String TAG = "SaveImageDialog";
 
     public static final String DIALOG_SAVE_IMAGE = "save image";
 
@@ -30,9 +33,14 @@ public class SaveImageFragment extends DialogFragment {
         void setViewForGenerateImage(ImageView imageView);
     }
 
-    private GenerateImage mGenerateImage;
+    public interface ConversionImage{
+        void saveImage(String nameImage);
+    }
 
-    public SaveImageFragment() {
+    private GenerateImage mGenerateImage;
+    private ConversionImage mConversionImage;
+
+    public SaveImageDialog() {
         // Required empty public constructor
     }
 
@@ -67,13 +75,26 @@ public class SaveImageFragment extends DialogFragment {
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        //conversion of an picture array   into a string for saving in the database
+                        if (mConversionImage != null){
+                            String imageName = mEditTextName.getText().toString();
+                            if (!imageName.isEmpty()){
+                                mConversionImage.saveImage(imageName);
+                            }else {
+                                SimpleDateFormat sd = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+                                imageName = sd.format(new Date());
+                                mConversionImage.saveImage(imageName);
+                            }
 
+                        }else {
+                            Log.d(TAG, "you must implement the interface setConversionImage(ConversionImage conversionImage)");
+                        }
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        SaveImageFragment.this.getDialog().cancel();
+                        SaveImageDialog.this.getDialog().cancel();
                     }
                 });
 
@@ -82,5 +103,9 @@ public class SaveImageFragment extends DialogFragment {
 
     public void setGenerateImage(GenerateImage generateImage) {
         mGenerateImage = generateImage;
+    }
+
+    public void setConversionImage(ConversionImage conversionImage) {
+        mConversionImage = conversionImage;
     }
 }

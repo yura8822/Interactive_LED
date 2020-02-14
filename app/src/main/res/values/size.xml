@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="quantity_columns">15</integer>
+    <integer name="quantity_rows">15</integer>
+    <integer name="cellSpacing">3</integer>
+</resources>

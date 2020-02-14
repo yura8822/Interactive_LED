@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,12 +22,13 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.tabs.TabLayout;
 import com.yura8822.bluetooth.BluetoothFragment;
-import com.yura8822.drawing_field.ColorPickerFragment;
+import com.yura8822.database.GalleryDBHelper;
+import com.yura8822.drawing_field.ColorPickerDialog;
 import com.yura8822.drawing_field.PaletteLastColorsFragment;
 import com.yura8822.drawing_field.PixelGirdFragment;
 import com.yura8822.gallery.GalleryImageActivity;
 import com.yura8822.gallery.ImageUtils;
-import com.yura8822.gallery.SaveImageFragment;
+import com.yura8822.gallery.SaveImageDialog;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,9 +37,9 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private BluetoothFragment mBluetoothFragment;
     private PixelGirdFragment mPixelGirdFragment;
-    private ColorPickerFragment mColorPickerFragment;
+    private ColorPickerDialog mColorPickerDialog;
     private PaletteLastColorsFragment mPaletteLastColorsFragment;
-    private SaveImageFragment mSaveImageFragment;
+    private SaveImageDialog mSaveImageDialog;
 
     private MenuItem mBT_on;
     private MenuItem mBT_disabled;
@@ -71,9 +73,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mColorPickerFragment = new ColorPickerFragment();
+        mColorPickerDialog = new ColorPickerDialog();
         //listener registration for color selection
-        mColorPickerFragment.setFragmentListenerColorPicker(new ColorPickerFragment.FragmentListenerColorPicker() {
+        mColorPickerDialog.setFragmentListenerColorPicker(new ColorPickerDialog.FragmentListenerColorPicker() {
             @Override
             public void fragmentColorSelected(int color) {
                 //set painting color
@@ -97,13 +99,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mSaveImageFragment = new SaveImageFragment();
+        mSaveImageDialog = new SaveImageDialog();
         //listener registration for generate image
-        mSaveImageFragment.setGenerateImage(new SaveImageFragment.GenerateImage() {
+        mSaveImageDialog.setGenerateImage(new SaveImageDialog.GenerateImage() {
             @Override
             public void setViewForGenerateImage(ImageView imageView) {
                 //set image from pixelGird in saveImageDialog
                 imageView.setImageBitmap(ImageUtils.createBitmapFromView(mPixelGirdFragment.getPixelGird()));
+            }
+        });
+        //listener registration for save image in data bases
+        mSaveImageDialog.setConversionImage(new SaveImageDialog.ConversionImage() {
+            @Override
+            public void saveImage(String nameImage) {
+                //parse array image to string
+                String image = ImageUtils.imageArraryToString(mPixelGirdFragment.getArrayPixelGird());
+
+                GalleryDBHelper galleryDBHelper = new GalleryDBHelper(getApplicationContext());
+                SQLiteDatabase db = galleryDBHelper.getWritableDatabase();
+                galleryDBHelper.insert(db, nameImage, image);
+
+                db.close();
+
+                Log.d(TAG, "saved image with name " + nameImage);
             }
         });
 
@@ -173,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.save_image_menu:
-                mSaveImageFragment.show(getSupportFragmentManager(), SaveImageFragment.DIALOG_SAVE_IMAGE);
+                mSaveImageDialog.show(getSupportFragmentManager(), SaveImageDialog.DIALOG_SAVE_IMAGE);
                 return true;
         }
         return false;
@@ -236,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
         public void onTabSelected(TabLayout.Tab tab) {
             switch (tab.getPosition()){
                 case 0:
-                    mColorPickerFragment.show(getSupportFragmentManager(), ColorPickerFragment.DIALOG_COLOR_PICKER);
+                    mColorPickerDialog.show(getSupportFragmentManager(), ColorPickerDialog.DIALOG_COLOR_PICKER);
                     break;
                 case 1:
                     mPixelGirdFragment.setColor(Color.BLACK);
@@ -258,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
         public void onTabReselected(TabLayout.Tab tab) {
             switch (tab.getPosition()){
                 case 0:
-                    mColorPickerFragment.show(getSupportFragmentManager(), ColorPickerFragment.DIALOG_COLOR_PICKER);
+                    mColorPickerDialog.show(getSupportFragmentManager(), ColorPickerDialog.DIALOG_COLOR_PICKER);
                     break;
                 case 1:
                     mPixelGirdFragment.setColor(Color.BLACK);

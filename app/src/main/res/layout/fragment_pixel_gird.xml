@@ -10,8 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        app:quantityColumns="15"
-        app:quantityRows="15"
-        app:cellSpacing="3"/>
+        app:quantityColumns="@integer/quantity_columns"
+        app:quantityRows="@integer/quantity_rows"
+        app:cellSpacing="@integer/cellSpacing"/>
 
 </LinearLayout>

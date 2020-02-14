@@ -79,7 +79,7 @@ public class PixelGird extends View {
             Log.d(TAG, "quantityColumnsPL > quantityRowsPL");
         }else if (quantityColumns < quantityRows){
             cellSize = sizeH / quantityRows;
-            if (quantityColumns * cellSize > sizeW) cellSize = sizeW / quantityColumns;
+            if (quantityColumns * cellSize > sizeW) cellSize = sizeW / quantityRows;
             Log.d(TAG, "quantityColumnsPL < quantityRowsPL");
         }else {
             cellSize = Math.min(sizeW, sizeH) / quantityColumns;
@@ -258,5 +258,9 @@ public class PixelGird extends View {
             listenerPixelGird.sendArrayGird(colorList);
         }
         invalidate();
+    }
+
+    public int[][] getColorList() {
+        return colorList;
     }
 }

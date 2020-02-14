@@ -14,8 +14,8 @@
 
     <ImageView
         android:id="@+id/save_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:scaleType="fitStart"/>
 
@@ -27,8 +27,8 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
+        android:inputType="text"
+        android:imeOptions="actionDone"
         android:hint="@string/hint_edit_text_save_image" />
-
-
 
 </LinearLayout>
