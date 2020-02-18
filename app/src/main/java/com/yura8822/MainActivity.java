@@ -1,11 +1,14 @@
 package com.yura8822;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +17,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -22,6 +26,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.tabs.TabLayout;
 import com.yura8822.bluetooth.BluetoothFragment;
+import com.yura8822.database.GalleryDBContract;
 import com.yura8822.database.GalleryDBHelper;
 import com.yura8822.drawing_field.ColorPickerDialog;
 import com.yura8822.drawing_field.PaletteLastColorsFragment;
@@ -33,6 +38,7 @@ import com.yura8822.gallery.SaveImageDialog;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+    private static final int REQUEST_ID_IMAGE = 1;
 
     private Toolbar toolbar;
     private BluetoothFragment mBluetoothFragment;
@@ -40,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private ColorPickerDialog mColorPickerDialog;
     private PaletteLastColorsFragment mPaletteLastColorsFragment;
     private SaveImageDialog mSaveImageDialog;
+
+    private GalleryDBHelper mGalleryDBHelper;
 
     private MenuItem mBT_on;
     private MenuItem mBT_disabled;
@@ -50,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mGalleryDBHelper = new GalleryDBHelper(getApplicationContext());
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -115,9 +125,8 @@ public class MainActivity extends AppCompatActivity {
                 //parse array image to string
                 String image = ImageUtils.imageArraryToString(mPixelGirdFragment.getArrayPixelGird());
 
-                GalleryDBHelper galleryDBHelper = new GalleryDBHelper(getApplicationContext());
-                SQLiteDatabase db = galleryDBHelper.getWritableDatabase();
-                galleryDBHelper.insert(db, nameImage, image);
+                SQLiteDatabase db = mGalleryDBHelper.getWritableDatabase();
+                mGalleryDBHelper.insert(db, nameImage, image);
 
                 db.close();
 
@@ -187,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.gallery_image:
                 Intent intent = new Intent(MainActivity.this, GalleryImageActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_ID_IMAGE);
                 return true;
 
             case R.id.save_image_menu:
@@ -220,6 +229,52 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != Activity.RESULT_OK){
+            return;
+        }
+        if (requestCode == REQUEST_ID_IMAGE) {
+            if (data == null) {
+                return;
+            }
+            String imageString = "";
+
+            try{
+                SQLiteDatabase db = mGalleryDBHelper.getReadableDatabase();
+
+                String[] projection = {
+                        GalleryDBContract.ImageGalleryTable.Colls.IMAGE
+                };
+
+                // Filter results WHERE "id" = //long value
+                String selection = GalleryDBContract.ImageGalleryTable.Colls.ID + " = ?";
+                String[] selectionArgs = {String.valueOf(GalleryImageActivity.getImageID(data))};
+
+                Cursor cursor = db.query(GalleryDBContract.ImageGalleryTable.TABLE_NAME,
+                        projection, selection, selectionArgs, null, null, null);
+
+                cursor.moveToFirst();
+
+                imageString = cursor.getString(
+                        cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.IMAGE));
+
+                cursor.close();
+                db.close();
+            }catch (SQLiteException e){
+                Log.e(TAG, "sql read error");
+            }
+
+            //parse string image in int[][] immage
+            int[][] colorList = ImageUtils.stringArrayToIntArray(getResources().getInteger(R.integer.quantity_rows),
+                    getResources().getInteger(R.integer.quantity_columns), imageString);
+            //set color list in pixel gird and draw
+            mPixelGirdFragment.loadImage(colorList);
+        }
+
+    }
 
     private TabLayout.BaseOnTabSelectedListener tabSelectedListenerMain = new TabLayout.OnTabSelectedListener() {
         @Override

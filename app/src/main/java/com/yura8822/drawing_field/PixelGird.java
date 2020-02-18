@@ -260,6 +260,21 @@ public class PixelGird extends View {
         invalidate();
     }
 
+
+    public void setColorList(int[][] colorList) {
+        for (int i = 0; i < this.colorList.length; i++){
+            for (int j = 0; j < this.colorList[i].length; j++){
+                this.colorList[i][j] = colorList[i][j];
+                this.previousColorList[i][j] = colorList[i][j];
+            }
+        }
+
+        if (listenerPixelGird != null) {
+            listenerPixelGird.sendArrayGird(this.colorList);
+        }
+        invalidate();
+    }
+
     public int[][] getColorList() {
         return colorList;
     }

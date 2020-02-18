@@ -2,7 +2,9 @@ package com.yura8822.gallery;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,14 +18,21 @@ import com.yura8822.R;
 public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapter.MyViewHolder> {
     private static final String TAG = "GalleryImageAdapter";
 
+    public interface LisetenerViewHolder{
+        void onClick(long id);
+    }
+    private LisetenerViewHolder mLisetenerViewHolder;
+
     private TextView mTextViewName;
     private ImageView mImageView;
     private Context mContext;
 
+    private long[] id;
     private String[] names;
     private String[] images;
 
-    public GalleryImageAdapter(String[] names, String[] images, Context context){
+    public GalleryImageAdapter(String[] names, String[] images, long[] id, Context context){
+        this.id = id;
         this.names = names;
         this.images = images;
         this.mContext = context;
@@ -47,7 +56,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         CardView cardView = holder.mCardView;
         mTextViewName = cardView.findViewById(R.id.text_view_name);
         mImageView = cardView.findViewById(R.id.view_image);
@@ -55,6 +64,19 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
         mTextViewName.setText(names[position]);
         Drawable drawable = ImageUtils.StringToDrawble(mContext, images[position]);
         mImageView.setImageDrawable(drawable);
+
+        cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mLisetenerViewHolder != null){
+                    mLisetenerViewHolder.onClick(id[position]);
+                }else
+                {
+                    Log.e(TAG, "set field mLisetenerViewHolder via GalleryImageAdapter.setLisetenerViewHolder function");
+                }
+
+            }
+        });
     }
 
     @Override
@@ -62,5 +84,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
         return names.length;
     }
 
-
+    public void setLisetenerViewHolder(LisetenerViewHolder lisetenerViewHolder) {
+        mLisetenerViewHolder = lisetenerViewHolder;
+    }
 }

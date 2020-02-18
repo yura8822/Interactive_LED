@@ -47,6 +47,19 @@ public class ImageUtils {
         return sb.toString();
     }
 
+    public static int[][] stringArrayToIntArray(int quantityRows, int quantityColumns, String imageString){
+        int[][] colorList = new int[quantityRows][quantityColumns];
+        String[] colorListString = imageString.split(" ");
+
+        int count = 0;
+        for (int i = 0; i < colorList.length; i++){
+            for (int j = 0; j < colorList[i].length; j++){
+                colorList[i][j] = Integer.parseInt(colorListString[count++]);
+            }
+        }
+        return colorList;
+    }
+
     public static Drawable StringToDrawble(Context context, String imageString) {
         return new DrawblePixelGird(context, imageString);
     }
@@ -144,19 +157,6 @@ public class ImageUtils {
         @Override
         public int getOpacity() {
             return PixelFormat.UNKNOWN;
-        }
-
-        private int[][] stringArrayToIntArray(int quantityRows, int quantityColumns, String imageString){
-            int[][] colorList = new int[quantityRows][quantityColumns];
-            String[] colorListString = imageString.split(" ");
-
-            int count = 0;
-            for (int i = 0; i < colorList.length; i++){
-                for (int j = 0; j < colorList[i].length; j++){
-                    colorList[i][j] = Integer.parseInt(colorListString[count++]);
-                }
-            }
-            return colorList;
         }
     }
 }

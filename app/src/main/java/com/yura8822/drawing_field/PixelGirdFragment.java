@@ -71,4 +71,8 @@ public class PixelGirdFragment extends Fragment {
     public int[][] getArrayPixelGird(){
         return mPixelGird.getColorList();
     }
+
+    public void loadImage(int[][] colorList){
+        mPixelGird.setColorList(colorList);
+    }
 }
