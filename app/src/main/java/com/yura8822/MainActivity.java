@@ -6,9 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,12 +23,12 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.tabs.TabLayout;
 import com.yura8822.bluetooth.BluetoothFragment;
-import com.yura8822.database.GalleryDBContract;
 import com.yura8822.database.GalleryDBHelper;
 import com.yura8822.drawing_field.ColorPickerDialog;
 import com.yura8822.drawing_field.PaletteLastColorsFragment;
 import com.yura8822.drawing_field.PixelGirdFragment;
 import com.yura8822.gallery.GalleryImageActivity;
+import com.yura8822.gallery.Image;
 import com.yura8822.gallery.ImageUtils;
 import com.yura8822.gallery.SaveImageDialog;
 
@@ -124,12 +121,7 @@ public class MainActivity extends AppCompatActivity {
             public void saveImage(String nameImage) {
                 //parse array image to string
                 String image = ImageUtils.imageArraryToString(mPixelGirdFragment.getArrayPixelGird());
-
-                SQLiteDatabase db = mGalleryDBHelper.getWritableDatabase();
-                mGalleryDBHelper.insert(db, nameImage, image);
-
-                db.close();
-
+                mGalleryDBHelper.insert(nameImage, image);
                 Log.d(TAG, "saved image with name " + nameImage);
             }
         });
@@ -240,40 +232,14 @@ public class MainActivity extends AppCompatActivity {
             if (data == null) {
                 return;
             }
-            String imageString = "";
-
-            try{
-                SQLiteDatabase db = mGalleryDBHelper.getReadableDatabase();
-
-                String[] projection = {
-                        GalleryDBContract.ImageGalleryTable.Colls.IMAGE
-                };
-
-                // Filter results WHERE "id" = //long value
-                String selection = GalleryDBContract.ImageGalleryTable.Colls.ID + " = ?";
-                String[] selectionArgs = {String.valueOf(GalleryImageActivity.getImageID(data))};
-
-                Cursor cursor = db.query(GalleryDBContract.ImageGalleryTable.TABLE_NAME,
-                        projection, selection, selectionArgs, null, null, null);
-
-                cursor.moveToFirst();
-
-                imageString = cursor.getString(
-                        cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.IMAGE));
-
-                cursor.close();
-                db.close();
-            }catch (SQLiteException e){
-                Log.e(TAG, "sql read error");
-            }
+            Image image = mGalleryDBHelper.findById(GalleryImageActivity.getImageID(data));
 
             //parse string image in int[][] immage
             int[][] colorList = ImageUtils.stringArrayToIntArray(getResources().getInteger(R.integer.quantity_rows),
-                    getResources().getInteger(R.integer.quantity_columns), imageString);
+                    getResources().getInteger(R.integer.quantity_columns), image.getImage());
             //set color list in pixel gird and draw
             mPixelGirdFragment.loadImage(colorList);
         }
-
     }
 
     private TabLayout.BaseOnTabSelectedListener tabSelectedListenerMain = new TabLayout.OnTabSelectedListener() {

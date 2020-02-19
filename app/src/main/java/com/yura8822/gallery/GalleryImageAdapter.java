@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.yura8822.R;
 
+import java.util.List;
+
 public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapter.MyViewHolder> {
     private static final String TAG = "GalleryImageAdapter";
 
@@ -27,14 +29,10 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
     private ImageView mImageView;
     private Context mContext;
 
-    private long[] id;
-    private String[] names;
-    private String[] images;
+    private List<Image> mImageList;
 
-    public GalleryImageAdapter(String[] names, String[] images, long[] id, Context context){
-        this.id = id;
-        this.names = names;
-        this.images = images;
+    public GalleryImageAdapter(List<Image> list, Context context){
+        this.mImageList = list;
         this.mContext = context;
     }
 
@@ -61,27 +59,29 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
         mTextViewName = cardView.findViewById(R.id.text_view_name);
         mImageView = cardView.findViewById(R.id.view_image);
 
-        mTextViewName.setText(names[position]);
-        Drawable drawable = ImageUtils.StringToDrawble(mContext, images[position]);
+        //get Image
+        final Image image = mImageList.get(position);
+
+        mTextViewName.setText(image.getName());
+        Drawable drawable = ImageUtils.StringToDrawble(mContext, image.getImage());
         mImageView.setImageDrawable(drawable);
 
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mLisetenerViewHolder != null){
-                    mLisetenerViewHolder.onClick(id[position]);
+                    mLisetenerViewHolder.onClick(image.getId());
                 }else
                 {
                     Log.e(TAG, "set field mLisetenerViewHolder via GalleryImageAdapter.setLisetenerViewHolder function");
                 }
-
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return names.length;
+        return mImageList.size();
     }
 
     public void setLisetenerViewHolder(LisetenerViewHolder lisetenerViewHolder) {
