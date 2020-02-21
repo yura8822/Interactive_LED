@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +22,9 @@ import java.util.List;
 public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapter.MyViewHolder> {
     private static final String TAG = "GalleryImageAdapter";
 
+    private static final int DELETE = 1;
+    private static final int SELECT = 0;
+
     public interface LisetenerViewHolder{
         void onClick(long id);
     }
@@ -27,6 +32,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
 
     private TextView mTextViewName;
     private ImageView mImageView;
+    private CheckBox mCheckBox;
     private Context mContext;
 
     private List<Image> mImageList;
@@ -54,13 +60,31 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
-        CardView cardView = holder.mCardView;
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
+        final CardView cardView = holder.mCardView;
         mTextViewName = cardView.findViewById(R.id.text_view_name);
         mImageView = cardView.findViewById(R.id.view_image);
+        mCheckBox = cardView.findViewById(R.id.checkBox_label_delete);
 
         //get Image
         final Image image = mImageList.get(position);
+
+        //if mode DELETE
+        if (image.getMode() == DELETE){
+            mCheckBox.setVisibility(View.VISIBLE);
+            mCheckBox.setChecked(image.isChecked());
+            mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    image.setChecked(isChecked);
+                    notifyItemChanged(position);
+                    for (Image image1 : mImageList){
+                        Log.d(TAG, image1.getName() + " " + image1.isChecked());
+                    }
+                    Log.d(TAG, "-------------------------------------");
+                }
+            });
+        }
 
         mTextViewName.setText(image.getName());
         Drawable drawable = ImageUtils.StringToDrawble(mContext, image.getImage());
@@ -69,12 +93,40 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mLisetenerViewHolder != null){
-                    mLisetenerViewHolder.onClick(image.getId());
-                }else
-                {
-                    Log.e(TAG, "set field mLisetenerViewHolder via GalleryImageAdapter.setLisetenerViewHolder function");
+                switch (image.getMode()){
+                    case SELECT:
+                        if (mLisetenerViewHolder != null){
+                            mLisetenerViewHolder.onClick(image.getId());
+                        }else
+                        {
+                            Log.e(TAG, "set field mLisetenerViewHolder via GalleryImageAdapter.setLisetenerViewHolder function");
+                        }
+                        break;
+                    case DELETE:
+//                        if (image.isChecked()){
+//                            image.setChecked(false);
+//                        }else {
+//                            image.setChecked(true);
+//                        }
+//                        notifyDataSetChanged();
+//
+//                        for (Image image1 : mImageList){
+//                            Log.d(TAG, image1.getName() + " " + image1.isChecked());
+//                        }
+//                        Log.d(TAG, "-------------------------------------");
+                        break;
                 }
+            }
+        });
+
+        cardView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                for (Image image: mImageList){
+                    image.setMode(DELETE);
+                    notifyDataSetChanged();
+                }
+                return true;
             }
         });
     }

@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.yura8822.R;
 import com.yura8822.database.GalleryDBHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GalleryImageActivity extends AppCompatActivity {

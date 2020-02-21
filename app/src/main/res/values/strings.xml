@@ -41,4 +41,7 @@
     <string name="save">Сохранить</string>
     <string name="save_image">Сохранить изображение</string>
 
+<!--    card_image_item.xml-->
+    <string name="select_card">выбрать</string>
+
 </resources>
