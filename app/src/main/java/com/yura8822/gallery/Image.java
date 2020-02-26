@@ -5,7 +5,6 @@ public class Image {
     private long id;
     private String name;
     private String image;
-    private int mode;
     private boolean isChecked;
 
     public Image() {
@@ -39,14 +38,6 @@ public class Image {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public int getMode() {
-        return mode;
-    }
-
-    public void setMode(int mode) {
-        this.mode = mode;
     }
 
     public boolean isChecked() {

@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.gallery_image:
-                Intent intent = new Intent(MainActivity.this, GalleryImageActivity.class);
+                Intent intent = GalleryImageActivity.newIntent(MainActivity.this);
                 startActivityForResult(intent, REQUEST_ID_IMAGE);
                 return true;
 
