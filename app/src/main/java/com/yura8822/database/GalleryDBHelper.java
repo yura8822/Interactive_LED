@@ -49,6 +49,27 @@ public class GalleryDBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void deleteByListId(List<Image> imageList){
+        SQLiteDatabase db = this.getReadableDatabase();
+        //Define 'where' part of query
+        String selection = GalleryDBContract.ImageGalleryTable.Colls.ID + " LIKE ?";
+        try {
+            //find marked for deletion and delete
+            for (Image value : imageList){
+                if (value.isChecked()){
+                    // Specify arguments in placeholder order.
+                    String[] selectionArgs = {String.valueOf(value.getId())};
+                    int detectedRow = db.delete(GalleryDBContract.ImageGalleryTable.TABLE_NAME,
+                            selection, selectionArgs);
+                    Log.d(TAG, "delete row = " + value.getName() + "  detectedRow = " + detectedRow);
+                }
+            }
+            db.close();
+        }catch (SQLiteException e){
+            Log.e(TAG, "deleteByListId(List<Image>)");
+        }
+    }
+
     public Image findById(long id){
         Image image = new Image();
         SQLiteDatabase db = this.getWritableDatabase();

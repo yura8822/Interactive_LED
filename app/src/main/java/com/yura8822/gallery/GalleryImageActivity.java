@@ -5,20 +5,29 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.yura8822.R;
 import com.yura8822.database.GalleryDBHelper;
 
+import java.nio.channels.SelectableChannel;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class GalleryImageActivity extends AppCompatActivity {
@@ -26,28 +35,102 @@ public class GalleryImageActivity extends AppCompatActivity {
 
     private static final String EXTRA_IMAGE_ID = "image_ID";
 
+    private static final int SELECT = 0;
+    private static final int DELETE = 1;
+    private int mode;
+
     private GalleryDBHelper mGalleryDBHelper;
+    private Toolbar mToolbarUp;
+    private Toolbar mToolbarDown;
+    private RecyclerView mRecyclerView;
+
+    private ImageAdapter mImageAdapter;
+    private List<Image> mImages;
+    private ImageButton mButtonDelete;
+    private TextView mTextCount;
+
+    private int actionBarHeight;
+    private int mCountMarkedDeleted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery_image);
+        //calculate size toolbar
+        TypedValue tv = new TypedValue();
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+        {
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+        }
+        //init view
+        mToolbarUp = findViewById(R.id.toolbar_up_gallery);
+        mToolbarDown = findViewById(R.id.toolbar_down_gallery);
+        mToolbarDown.setVisibility(View.GONE);
+
+        //init delete button
+        mButtonDelete = findViewById(R.id.delete_image_button);
+        mButtonDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mGalleryDBHelper.deleteByListId(mImages);
+                for (int i = 0; i < mImages.size(); i++){
+                    if (mImages.get(i).isChecked()){
+                        Log.d(TAG, "name " + mImages.get(i).getName());
+                        mImages.remove(i);
+                        i--;
+                        mImageAdapter.notifyItemRemoved(i);
+                    }
+                }
+                hideToolbarDown();
+            }
+        });
+        //init text view for output number of marked cards to delete
+        mTextCount = findViewById(R.id.count_selected_textView);
 
         mGalleryDBHelper = new GalleryDBHelper(getApplicationContext());
 
         //init list
-        List<Image> imageList = mGalleryDBHelper.findAll();
+        mImages = mGalleryDBHelper.findAll();
 
-        RecyclerView recyclerView = findViewById(R.id.recycler_view_galerry);
+        mRecyclerView = findViewById(R.id.recycler_view_galerry);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        recyclerView.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(true);
         // use a linear layout manager
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-        recyclerView.setLayoutManager(gridLayoutManager);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
         // specify an adapter
-        ImageAdapter imageAdapter = new ImageAdapter(GalleryImageActivity.this, imageList);
-        recyclerView.setAdapter(imageAdapter);
+        mImageAdapter = new ImageAdapter(GalleryImageActivity.this, mImages);
+        mRecyclerView.setAdapter(mImageAdapter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        switch (mode){
+            case SELECT:
+                super.onBackPressed();
+                break;
+            case DELETE:
+                hideToolbarDown();
+                break;
+        }
+    }
+
+    private void showToolbarDown(){
+        mToolbarDown.setVisibility(View.VISIBLE);
+        mRecyclerView.setPadding(0,0,0, actionBarHeight*2);
+        mCountMarkedDeleted = 1;
+        mTextCount.setText(String.valueOf(mCountMarkedDeleted));
+    }
+
+    private void hideToolbarDown(){
+        mode = SELECT;
+        mToolbarDown.setVisibility(View.GONE);
+        mRecyclerView.setPadding(0, 0, 0, actionBarHeight);
+        for (Image value : mImages){
+            value.setChecked(false);
+        }
+        mImageAdapter.notifyDataSetChanged();
     }
 
     public static Intent newIntent(Context context){
@@ -70,6 +153,7 @@ public class GalleryImageActivity extends AppCompatActivity {
 
         private TextView mTextViewName;
         private ImageView mImageView;
+        private CardView mCardView;
 
         private Image mImage;
 
@@ -77,14 +161,15 @@ public class GalleryImageActivity extends AppCompatActivity {
         private View.OnLongClickListener mOnLongClickListener;
 
 
-        public ImageHolder (LayoutInflater inflater, ViewGroup parent, Context context){
+        ImageHolder(LayoutInflater inflater, ViewGroup parent, Context context){
             super(inflater.inflate(R.layout.card_image_item, parent,false));
             mContext = context;
             mTextViewName = itemView.findViewById(R.id.text_view_name);
             mImageView = itemView.findViewById(R.id.view_image);
+            mCardView = itemView.findViewById(R.id.card_view_image);
         }
 
-        public void bind(Image image){
+        void bind(Image image){
             mImage = image;
             mTextViewName.setText(mImage.getName());
             mImageView.setImageDrawable(ImageUtils.StringToDrawble(mContext, mImage.getImage()));
@@ -93,30 +178,26 @@ public class GalleryImageActivity extends AppCompatActivity {
             itemView.setOnLongClickListener(mOnLongClickListener);
 
             if (image.isChecked()){
-                itemView.setBackgroundColor(getResources()
+                mCardView.setCardBackgroundColor(getResources()
                         .getColor(R.color.colorPrimaryDark));
             }else
-                itemView.setBackgroundColor(Color.WHITE);
+                mCardView.setCardBackgroundColor(Color.WHITE);
         }
 
-        public void setOnClickListener(View.OnClickListener onClickListener) {
+         void setOnClickListener(View.OnClickListener onClickListener) {
             mOnClickListener = onClickListener;
         }
 
-        public void setOnLongClickListener(View.OnLongClickListener onLongClickListener) {
+         void setOnLongClickListener(View.OnLongClickListener onLongClickListener) {
             mOnLongClickListener = onLongClickListener;
         }
     }
 
     private class ImageAdapter extends RecyclerView.Adapter<ImageHolder>{
-        private static final int SELECT = 0;
-        private static final int DELETE = 1;
-        private int mode;
+        private List<Image> mImageList;
+        private Context mContext;
 
-        List<Image> mImageList;
-        Context mContext;
-
-        public ImageAdapter(Context context, List<Image> imageList) {
+        ImageAdapter(Context context, List<Image> imageList) {
             mContext = context;
             mImageList = imageList;
         }
@@ -141,21 +222,15 @@ public class GalleryImageActivity extends AppCompatActivity {
                         case DELETE:
                             if (image.isChecked()){
                                 image.setChecked(false);
-                                notifyItemChanged(position);
-
+                                mCountMarkedDeleted--;
                             }else {
                                 image.setChecked(true);
-                                notifyItemChanged(position);
+                                mCountMarkedDeleted++;
                             }
-
-
-                            for (Image value: mImageList){
-                                Log.d(TAG, " "+ value.isChecked());
-                            }
-                            Log.d(TAG, " ------------------------------------");
-
                             break;
                     }
+                    notifyItemChanged(position);
+                    mTextCount.setText(String.valueOf(mCountMarkedDeleted));
                 }
             });
             holder.setOnLongClickListener(new View.OnLongClickListener() {
@@ -164,6 +239,7 @@ public class GalleryImageActivity extends AppCompatActivity {
                     mode = DELETE;
                     image.setChecked(true);
                     notifyItemChanged(position);
+                    showToolbarDown();
                     return true;
                 }
             });
@@ -175,8 +251,4 @@ public class GalleryImageActivity extends AppCompatActivity {
             return mImageList.size();
         }
     }
-
-
-
-
 }
