@@ -240,10 +240,13 @@ public class BluetoothFragment extends Fragment {
         }
     }
 
-    public boolean getConnected() {
-        if (mBTService.getState() == BluetoothService.STATE_CONNECTED) {
-            return true;
-        } else  {
+    public boolean getStateConnected() {
+        if (mBTService != null){
+            if (mBTService.getState() == BluetoothService.STATE_CONNECTED) {
+                return true;
+            }
+            return false;
+        }else{
             return false;
         }
     }

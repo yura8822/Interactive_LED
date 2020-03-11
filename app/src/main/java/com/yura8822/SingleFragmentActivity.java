@@ -105,7 +105,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
 
     private void updateMenu(){
         mBluetoothEnabled = BluetoothAdapter.getDefaultAdapter().isEnabled();
-        mBluetoothConnected = mBluetoothFragment.getConnected();
+        mBluetoothConnected = mBluetoothFragment.getStateConnected();
         SingleFragmentActivity.this.invalidateOptionsMenu();
     }
 
