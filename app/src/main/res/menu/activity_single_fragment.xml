@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/bluetooth_on"
+        android:title="@string/bluetooth_on"
+        android:icon="@drawable/ic_bluetooth_on"
+        app:showAsAction="ifRoom"
+        />
+    <item
+        android:id="@+id/bluetooth_off"
+        android:title="@string/bluetooth_off"
+        android:icon="@drawable/ic_bluetooth_off"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/bluetooth_connected"
+        android:title="@string/bluetooth_connected"
+        android:icon="@drawable/ic_bluetooth_connected"
+        app:showAsAction="ifRoom"/>
+</menu>

@@ -16,6 +16,16 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class BluetoothService {
+    // Message types
+    final static int MESSAGE_STATE_CHANGE = 1;
+    final static int MESSAGE_READ = 2;
+    final static int MESSAGE_WRITE = 3;
+    final static int MESSAGE_DEVICE_NAME = 4;
+    final static int MESSAGE_TOAST = 5;
+
+    // Key names
+    final static String DEVICE_NAME = "device_name";
+    final static String TOAST = "toast";
 
     private static final String TAG = "BluetoothService";
 
@@ -32,11 +42,11 @@ public class BluetoothService {
     private ConnectedThread mConnectedThread;
 
     // Constants that indicate the current connection state
-    public static final int STATE_NONE = 0;       // we're doing nothing
-    public static final int STATE_CONNECTING = 1; // now initiating an outgoing connection
-    public static final int STATE_CONNECTED = 2;  // now connected to a remote device
+    static final int STATE_NONE = 0;       // we're doing nothing
+    static final int STATE_CONNECTING = 1; // now initiating an outgoing connection
+    static final int STATE_CONNECTED = 2;  // now connected to a remote device
 
-    public BluetoothService(Context context, Handler handler) {
+    BluetoothService(Context context, Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mNewState = mState;
@@ -51,17 +61,17 @@ public class BluetoothService {
         mNewState = mState;
 
         // Give the new state to the Handler so the UI Activity can update
-        mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, mNewState, -1).sendToTarget();
+        mHandler.obtainMessage(MESSAGE_STATE_CHANGE, mNewState, -1).sendToTarget();
     }
 
     //Return the current connection state
-    public synchronized int getState() {
+    synchronized int getState() {
         return mState;
     }
 
     //Start the BT service. Specifically start AcceptThread to begin a
     //session in listening (server) mode. Called by the Activity onResume()
-    public synchronized void start() {
+    synchronized void start() {
         Log.d(TAG, "start");
 
         // Cancel any thread attempting to make a connection
@@ -81,7 +91,7 @@ public class BluetoothService {
     }
 
     //Start the ConnectThread to initiate a connection to a remote device.
-    public synchronized void connect(BluetoothDevice device) {
+    synchronized void connect(BluetoothDevice device) {
         Log.d(TAG, "connect to: " + device);
 
         // Cancel any thread attempting to make a connection
@@ -106,7 +116,7 @@ public class BluetoothService {
     }
 
     //Start the ConnectedThread to begin managing a Bluetooth connection
-    public synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
+    synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
         Log.d(TAG, "connected");
 
         // Cancel the thread that completed the connection
@@ -127,9 +137,9 @@ public class BluetoothService {
         mConnectedThread.start();
 
         // Send the name of the connected device back to the UI Activity
-        Message msg = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_NAME);
+        Message msg = mHandler.obtainMessage(MESSAGE_DEVICE_NAME);
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.DEVICE_NAME, device.getName());
+        bundle.putString(DEVICE_NAME, device.getName());
         msg.setData(bundle);
         mHandler.sendMessage(msg);
         // Update UI title
@@ -137,7 +147,7 @@ public class BluetoothService {
     }
 
     //Stop all threads
-    public synchronized void stop() {
+    synchronized void stop() {
         Log.d(TAG, "stop");
 
         if (mConnectThread != null) {
@@ -156,7 +166,7 @@ public class BluetoothService {
     }
 
     //Write to the ConnectedThread in an unsynchronized manner
-    public void write(byte[] out) {
+    void write(byte[] out) {
         // Create temporary object
         ConnectedThread r;
         // Synchronize a copy of the ConnectedThread
@@ -171,9 +181,9 @@ public class BluetoothService {
     // Send a failure message back to the Activity
     private void connectionFailed() {
         // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
+        Message msg = mHandler.obtainMessage(MESSAGE_TOAST);
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.TOAST, "Unable to connect device");
+        bundle.putString(TOAST, "Unable to connect device");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 
@@ -188,9 +198,9 @@ public class BluetoothService {
     //Indicate that the connection was lost and notify the UI Activity
     private void connectionLost() {
         // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
+        Message msg = mHandler.obtainMessage(MESSAGE_TOAST);
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.TOAST, "Device connection was lost");
+        bundle.putString(TOAST, "Device connection was lost");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 
@@ -303,7 +313,7 @@ public class BluetoothService {
                     bytes = mmInStream.read(buffer);
 
                     // Send the obtained bytes to the UI Activity
-                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
+                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
@@ -319,7 +329,7 @@ public class BluetoothService {
                 mmOutStream.write(buffer);
 
                 // Share the sent message back to the UI Activity
-                mHandler.obtainMessage(Constants.MESSAGE_WRITE, -1, -1, buffer)
+                mHandler.obtainMessage(MESSAGE_WRITE, -1, -1, buffer)
                         .sendToTarget();
             } catch (IOException e) {
                 Log.e(TAG, "Exception during write", e);

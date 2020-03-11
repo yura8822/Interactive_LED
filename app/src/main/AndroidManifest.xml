@@ -15,8 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">  <!-- temporary measure -->
-
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".SingleFragmentActivity"></activity>
+        <!-- temporary measure -->
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
@@ -26,17 +27,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".bluetooth.DeviceListActivity"
-            android:screenOrientation="portrait">
-        </activity>
-
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".gallery.GalleryImageActivity"
-            android:screenOrientation="portrait">
-        </activity>
-
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

@@ -4,48 +4,38 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.yura8822.R;
 
 public class BluetoothFragment extends Fragment {
-
     private static final String TAG = "BluetoothFragment";
 
+    public interface OnBluetoothConnected{
+        void onStateConnected();
+    }
+    private OnBluetoothConnected mOnBluetoothConnected;
 
     // Intent request codes
     private static final int REQUEST_CONNECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
-
-    //Name of the connected device
-    private String mConnectedDeviceName = null;
-
-    //String buffer for outgoing messages
-    private StringBuffer mOutStringBuffer;
 
     //Local Bluetooth adapter
     private BluetoothAdapter mBluetoothAdapter = null;
 
     //Member object for the bluetooth services
     private BluetoothService mBTService = null;
-
-    private MenuItem mBT_connected;
 
     public BluetoothFragment() {
     }
@@ -66,14 +56,13 @@ public class BluetoothFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_bluetooth, container, false);
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        //component initialization
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try {
+            mOnBluetoothConnected = (OnBluetoothConnected) getActivity();
+        }catch (ClassCastException e){
+            throw new ClassCastException(getActivity().toString() + " must implement OnArticleSelectedListener");
+        }
     }
 
     @Override
@@ -96,7 +85,6 @@ public class BluetoothFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
         // Performing this check in onResume() covers the case in which BT was
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
@@ -118,18 +106,12 @@ public class BluetoothFragment extends Fragment {
 
     private void setupBT() {
         Log.d(TAG, "setupChat()");
-
         FragmentActivity activity = getActivity();
         if (activity == null) {
             return;
         }
-
         // Initialize the BluetoothChatService to perform bluetooth connections
         mBTService = new BluetoothService(activity, mHandler);
-
-        // Initialize the buffer for outgoing messages
-        mOutStringBuffer = new StringBuffer();
-
     }
 
     //Sends a message
@@ -144,10 +126,10 @@ public class BluetoothFragment extends Fragment {
         // Check that there's actually something to send
         byte[] resultArray = new byte[677];
         int index = 0;
-        resultArray[index] = (byte)111;
+        resultArray[index] = (byte) 111;
 
-        for (int i = 0; i < colorList.length; i++){
-            for(int j = 0; j < colorList[i].length; j++){
+        for (int i = 0; i < colorList.length; i++) {
+            for (int j = 0; j < colorList[i].length; j++) {
                 resultArray[++index] = (byte) Color.red(colorList[i][j]);
                 resultArray[++index] = (byte) Color.green(colorList[i][j]);
                 resultArray[++index] = (byte) Color.blue(colorList[i][j]);
@@ -163,60 +145,53 @@ public class BluetoothFragment extends Fragment {
         @Override
         public void handleMessage(Message msg) {
             FragmentActivity activity = getActivity();
-
             switch (msg.what) {
-                case Constants.MESSAGE_STATE_CHANGE:
-                    if (activity != null){ //temp !!!
+                case BluetoothService.MESSAGE_STATE_CHANGE:
+                    if (activity != null) { //temp !!!
                         switch (msg.arg1) {
 
                             case BluetoothService.STATE_CONNECTED:
-                                if (mBT_connected != null){
-                                    mBT_connected.setVisible(true);
-                                }
+                                mOnBluetoothConnected.onStateConnected();
                                 Log.d(TAG, "MESSAGE_STATE_CHANGE: STATE_CONNECTED");
                                 break;
 
                             case BluetoothService.STATE_CONNECTING:
-                                if (mBT_connected != null){
-                                    mBT_connected.setVisible(false);
-                                }
+                                mOnBluetoothConnected.onStateConnected();
                                 Log.d(TAG, "MESSAGE_STATE_CHANGE: STATE_CONNECTING");
                                 break;
 
                             case BluetoothService.STATE_NONE:
-                                if (mBT_connected != null){
-                                    mBT_connected.setVisible(false);
-                                }
+                                mOnBluetoothConnected.onStateConnected();
                                 Log.d(TAG, "MESSAGE_STATE_CHANGE: STATE_NONE");
                                 break;
                         }
                     }
                     break;
 
-                case Constants.MESSAGE_WRITE:
+                case BluetoothService.MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
                     break;
 
-                case Constants.MESSAGE_READ:
+                case BluetoothService.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     break;
 
-                case Constants.MESSAGE_DEVICE_NAME:
+                case BluetoothService.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    String connectedDeviceName = msg.getData().getString(BluetoothService.DEVICE_NAME);
                     if (null != activity) {
                         Toast.makeText(activity, "Connected to "
-                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                                + connectedDeviceName, Toast.LENGTH_SHORT).show();
                     }
                     break;
 
-                case Constants.MESSAGE_TOAST:
+                case BluetoothService.MESSAGE_TOAST:
                     if (null != activity) {
-                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
+                        Toast.makeText(activity, msg.getData().getString(BluetoothService.TOAST),
                                 Toast.LENGTH_SHORT).show();
                     }
                     break;
@@ -226,14 +201,7 @@ public class BluetoothFragment extends Fragment {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE:
-                // When DeviceListActivity returns with a device to connect
-                if (resultCode == Activity.RESULT_OK) {
-                    connectDevice(data);
-                }
-                break;
-
-            case REQUEST_ENABLE_BT:
+            case REQUEST_ENABLE_BT: {
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
@@ -248,10 +216,11 @@ public class BluetoothFragment extends Fragment {
                         activity.finish();
                     }
                 }
+            }
         }
     }
 
-    private void connectDevice(Intent data){
+    public void connectDevice(Intent data) {
         // Get the device MAC address
         Bundle extras = data.getExtras();
         if (extras == null) {
@@ -264,27 +233,20 @@ public class BluetoothFragment extends Fragment {
         mBTService.connect(device);
     }
 
-    @Override
-    public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        mBT_connected = menu.findItem(R.id.bluetooth_connected);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.device_list_activity:
-                Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
-                return true;
-        }
-        return false;
-    }
-
     //Stop all threads
-    public void stop(){
-        if (mBTService != null){
+    public void stop() {
+        if (mBTService != null) {
             mBTService.stop();
         }
     }
+
+    public boolean getConnected() {
+        if (mBTService.getState() == BluetoothService.STATE_CONNECTED) {
+            return true;
+        } else  {
+            return false;
+        }
+    }
 }
+
+
