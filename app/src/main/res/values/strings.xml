@@ -19,8 +19,8 @@
     <string name="title_not_connected">not connected</string>
 
     <!--    ToolBar state-->
-<!--    <string name="bluetooth_on">Bluetooth включен</string>-->
-<!--    <string name="bluetooth_connected">Соединен</string>-->
+    <!--    <string name="bluetooth_on">Bluetooth включен</string>-->
+    <!--    <string name="bluetooth_connected">Соединен</string>-->
     <string name="bluetooth_disabled">Bluetooth выключен</string>
     <string name="device_list">Найти устройства</string>
     <string name="gallery_image">Галерея</string>
@@ -45,9 +45,11 @@
     <string name="select_card">выбрать</string>
 
     <!--    +++++++++++++++++++++ -->
-<!--    menu: activity_single_fragment-->
+    <!--    menu: activity_single_fragment-->
     <string name="bluetooth_on">Bluetooth включен</string>
     <string name="bluetooth_off">Bluetooth выключен</string>
     <string name="bluetooth_connected">Соединен</string>
+
+
 
 </resources>
