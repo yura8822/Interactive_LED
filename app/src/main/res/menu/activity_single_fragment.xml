@@ -5,17 +5,25 @@
         android:id="@+id/bluetooth_on"
         android:title="@string/bluetooth_on"
         android:icon="@drawable/ic_bluetooth_on"
+        android:orderInCategory="1"
         app:showAsAction="ifRoom"
         />
     <item
         android:id="@+id/bluetooth_off"
         android:title="@string/bluetooth_off"
         android:icon="@drawable/ic_bluetooth_off"
+        android:orderInCategory="2"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/bluetooth_connected"
         android:title="@string/bluetooth_connected"
         android:icon="@drawable/ic_bluetooth_connected"
+        android:orderInCategory="3"
         app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/device_list"
+        android:title="@string/device_list"
+        android:orderInCategory="4"
+        app:showAsAction="never" />
 </menu>

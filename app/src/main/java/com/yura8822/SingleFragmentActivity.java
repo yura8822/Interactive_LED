@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.yura8822.bluetooth.BluetoothFragment;
+import com.yura8822.device_search.DeviceListActivity;
 
 public abstract class SingleFragmentActivity extends AppCompatActivity implements BluetoothFragment.OnBluetoothConnected {
     private static final String TAG = "SingleFragmentActivity";
@@ -100,6 +101,11 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.device_list:{
+                startActivity(new Intent(this, DeviceListActivity.class));
+            }
+        }
         return super.onOptionsItemSelected(item);
     }
 

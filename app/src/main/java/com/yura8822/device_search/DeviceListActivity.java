@@ -7,6 +7,6 @@ import com.yura8822.SingleFragmentActivity;
 public class DeviceListActivity extends SingleFragmentActivity {
     @Override
     protected Fragment createFragment() {
-        return new Fragment();
+        return new DeviceListFragment();
     }
 }
