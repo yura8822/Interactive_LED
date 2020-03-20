@@ -95,6 +95,10 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
         }else {
             bluetoothConnecned.setVisible(false);
         }
+
+        if (this.getClass() == DeviceListActivity.class){
+            menu.findItem(R.id.device_list).setVisible(false);
+        }
         return true;
     }
 

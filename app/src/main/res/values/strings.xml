@@ -2,12 +2,8 @@
     <string name="app_name">Interactive_LED</string>
 
     <!--  DeviceListActivity -->
-    <string name="scanning">сканирование устройств....</string>
+
     <string name="select_device">выберите устройства для подключения</string>
-    <string name="none_paired">Устройства не были сопряжены</string>
-    <string name="none_found">Устройства не найдены</string>
-    <string name="title_paired_devices">Сопряженные устройства</string>
-    <string name="title_other_devices">Другие доступные устройства</string>
     <string name="button_scan">Сканирование устройств</string>
 
     <!--  BluetoothFragment -->
@@ -54,6 +50,11 @@
     <!--    DeviceListFragment-->
     <string name="name_devices">Имя:</string>
     <string name="address_devices">MAC:</string>
+    <string name="none_paired">Устройства не были сопряжены</string>
+    <string name="title_paired_devices">Сопряженные устройства</string>
+    <string name="none_found">Устройства не найдены</string>
+    <string name="title_other_devices">Другие доступные устройства</string>
+    <string name="scanning">Сканирование устройств....</string>
 
 
 
