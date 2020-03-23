@@ -4,7 +4,7 @@
     <!--  DeviceListActivity -->
 
     <string name="select_device">выберите устройства для подключения</string>
-    <string name="button_scan">Сканирование устройств</string>
+
 
     <!--  BluetoothFragment -->
     <string name="send">Send</string>
@@ -41,6 +41,11 @@
     <string name="select_card">выбрать</string>
 
     <!--    +++++++++++++++++++++ -->
+    <!--    SingleFragmentActivity-->
+    <string name="sate_bluetooth_off">Включите Bluetooth</string>
+    <string name="state_non_connected_device">Подключите устройство</string>
+    <string name="state_connected_device">Устройство подключено</string>
+
     <!--    menu: activity_single_fragment-->
     <string name="bluetooth_on">Bluetooth включен</string>
     <string name="bluetooth_off">Bluetooth выключен</string>
@@ -55,6 +60,8 @@
     <string name="none_found">Устройства не найдены</string>
     <string name="title_other_devices">Другие доступные устройства</string>
     <string name="scanning">Сканирование устройств....</string>
+    <string name="button_scan">Сканировать устройства</string>
+
 
 
 

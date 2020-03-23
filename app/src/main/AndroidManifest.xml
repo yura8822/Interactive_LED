@@ -19,7 +19,7 @@
         <activity android:name=".SingleFragmentActivity"></activity>
 
         <activity
-            android:name=".device_search.DeviceListActivity"
+            android:name=".main.DrawingActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,11 +29,7 @@
         </activity>
 
         <activity
-            android:name=".bluetooth.DeviceListActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity
-            android:name=".gallery.GalleryImageActivity"
+            android:name=".device_search.DeviceListActivity"
             android:screenOrientation="portrait"/>
 
 

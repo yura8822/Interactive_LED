@@ -1,6 +1,6 @@
 package com.yura8822.device_search;
 
-import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -18,8 +18,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +30,7 @@ import java.util.Set;
 
 public class DeviceListFragment extends Fragment {
     private static final String TAG = "DeviceListFragment";
+    private static final String EXTRA_DEVICE_ADDRESS = "com.yura8822.extra_device_list";
 
     private RecyclerView mPairedDevicesRecycler;
     private DevicesAdapter mPairedDevicesAdapter;
@@ -111,7 +110,6 @@ public class DeviceListFragment extends Fragment {
         mScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                accessLocationPermission();
                 searchPairedDevices();
                 doDiscovery();
             }
@@ -128,6 +126,8 @@ public class DeviceListFragment extends Fragment {
         getActivity().registerReceiver(mReceiver, filter);
 
         searchPairedDevices();
+        doDiscovery();
+
         updateUI();
     }
 
@@ -159,7 +159,6 @@ public class DeviceListFragment extends Fragment {
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 mScanButton.setEnabled(true);
             }
-
             updateUI();
         }
     };
@@ -168,6 +167,7 @@ public class DeviceListFragment extends Fragment {
         private TextView mName;
         private TextView mAddress;
         private Device mDevice;
+        private View.OnClickListener mOnClickListener;
 
         public DevicesHolder(@NonNull View itemView) {
             super(itemView);
@@ -179,6 +179,11 @@ public class DeviceListFragment extends Fragment {
             mDevice = device;
             mName.setText(mDevice.getName());
             mAddress.setText(mDevice.getAddress());
+            itemView.setOnClickListener(mOnClickListener);
+        }
+
+        public void setOnClickListener(View.OnClickListener onClickListener) {
+            this.mOnClickListener = onClickListener;
         }
     }
 
@@ -198,8 +203,21 @@ public class DeviceListFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull DevicesHolder holder, int position) {
-            holder.bind(mDevicesList.get(position));
+        public void onBindViewHolder(@NonNull DevicesHolder holder, final int position) {
+            final Device device = mDevicesList.get(position);
+            holder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mBtAdapter != null){
+                        mBtAdapter.cancelDiscovery();
+                    }
+                    Intent intent = new Intent();
+                    intent.putExtra(EXTRA_DEVICE_ADDRESS, device.getAddress());
+                    getActivity().setResult(Activity.RESULT_OK, intent);
+                    getActivity().finish();
+                }
+            });
+            holder.bind(device);
         }
 
         @Override
@@ -209,16 +227,6 @@ public class DeviceListFragment extends Fragment {
 
         public void setDevicesList(List<Device> devicesList) {
             mDevicesList = devicesList;
-        }
-    }
-
-    private void accessLocationPermission() {
-        int permissionCheck = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
-        permissionCheck += ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION);
-
-        if (permissionCheck != 0){
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
         }
     }
 
