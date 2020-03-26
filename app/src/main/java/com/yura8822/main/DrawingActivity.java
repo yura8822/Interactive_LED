@@ -10,4 +10,5 @@ public class DrawingActivity extends SingleFragmentActivity {
     protected Fragment createFragment() {
         return new DrawingFragment();
     }
+
 }

@@ -1,17 +1,11 @@
 package com.yura8822.main;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.ActionMenuView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,17 +13,43 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.ActionMenuView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+
 import com.yura8822.R;
+import com.yura8822.drawing_field.PaletteLastColors;
+import com.yura8822.drawing_field.PixelGird;
 
 public class DrawingFragment extends Fragment {
     private static final String TAG = "DrawingFragment";
     private final static int REQUEST_COLOR = 0;
 
+    public interface OnSendListener {
+        void sendToBluetooth(int[][] colorList);
+    }
+
+    private OnSendListener mOnSendListener;
+
     private Toolbar mBottomToolbar;
     private ColorPickerDialog mColorPicker;
+    private PixelGird mPixelGird;
+    private PaletteLastColors mPaletteLastColors;
 
     public DrawingFragment() {
 
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try {
+            mOnSendListener = (OnSendListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().toString() + " must implement OnSendListener");
+        }
     }
 
     @Override
@@ -44,6 +64,22 @@ public class DrawingFragment extends Fragment {
         menuInflater.inflate(R.menu.fragment_drawing, actionMenu.getMenu());
         actionMenu.setOnMenuItemClickListener(mItemClickListener);
 
+        mPixelGird = view.findViewById(R.id.pixel_gird);
+        //registering the listener to send the grid array in case of changes
+        mPixelGird.setListenerPixelGird(new PixelGird.ListenerPixelGird() {
+            @Override
+            public void sendArrayGird(int[][] colorList) {
+                mOnSendListener.sendToBluetooth(colorList);
+            }
+        });
+        mPaletteLastColors = view.findViewById(R.id.palette_last_colors);
+        //listener registration for palette colors
+        mPaletteLastColors.setListenerPaletteLastColors(new PaletteLastColors.ListenerPaletteLastColors() {
+            @Override
+            public void selectColor(int color) {
+                updateSelectedColor(color);
+            }
+        });
 
         return view;
     }
@@ -55,12 +91,14 @@ public class DrawingFragment extends Fragment {
         }
         if (requestCode == REQUEST_COLOR){
             int color = ColorPickerDialog.getColor(data);
+            mPaletteLastColors.addColor(color);
             updateSelectedColor(color);
         }
     }
 
     private void updateSelectedColor(int color){
         mBottomToolbar.getLogo().setColorFilter(color, PorterDuff.Mode.LIGHTEN);
+        mPixelGird.setColor(color);
     }
 
     ActionMenuView.OnMenuItemClickListener mItemClickListener = new ActionMenuView.OnMenuItemClickListener() {
@@ -74,11 +112,11 @@ public class DrawingFragment extends Fragment {
                     return true;
                 }
                 case R.id.eraser:{
-                    Toast.makeText(getActivity(), "eraser", Toast.LENGTH_SHORT).show();
+                    updateSelectedColor(Color.BLACK);
                     return true;
                 }
                 case R.id.erase_drawing:{
-                    Toast.makeText(getActivity(), "erase drawing", Toast.LENGTH_SHORT).show();
+                    mPixelGird.resetColorList();
                     return true;
                 }
                 default:{

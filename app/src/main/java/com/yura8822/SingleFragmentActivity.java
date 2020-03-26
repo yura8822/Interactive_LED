@@ -23,8 +23,10 @@ import androidx.fragment.app.FragmentManager;
 
 import com.yura8822.bluetooth.BluetoothFragment;
 import com.yura8822.device_search.DeviceListActivity;
+import com.yura8822.main.DrawingFragment;
 
-public abstract class SingleFragmentActivity extends AppCompatActivity implements BluetoothFragment.OnBluetoothConnected {
+public abstract class SingleFragmentActivity extends AppCompatActivity implements BluetoothFragment.OnBluetoothConnected,
+        DrawingFragment.OnSendListener {
     private static final String TAG = "SingleFragmentActivity";
     private static final String BLUETOOTH_FRAGMENT_TAG = "com.yura8822.SingleFragmentActivity.BluetoothFragment";
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 0;
@@ -114,10 +116,15 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
         switch (item.getItemId()){
             case R.id.device_list:{
                 checkPermissionsAndStartDeviceList();
-                break;
+                return true;
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStateConnected() {
+        updateMenu();
     }
 
     private void updateMenu(){
@@ -138,8 +145,12 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
     }
 
     @Override
-    public void onStateConnected() {
-        updateMenu();
+    public void sendToBluetooth(int[][] colorList) {
+        send(colorList);
+    }
+
+    private void send(int[][] colorList){
+        mBluetoothFragment.sendMessage(colorList);
     }
 
     // BroadcastReceiver that listens for bluetooth adapter status
@@ -155,14 +166,6 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
             }
         }
     };
-
-    protected void stopBluetooth(){
-        mBluetoothFragment.stop();
-    }
-
-    protected void connectDevice(Intent data){
-        mBluetoothFragment.connectDevice(data);
-    }
 
     private void checkPermissionsAndStartDeviceList(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -194,4 +197,13 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
     private void startDeviceList(){
         startActivity(new Intent(this, DeviceListActivity.class));
     }
+
+    protected void stopBluetooth(){
+        mBluetoothFragment.stop();
+    }
+
+    protected void connectDevice(Intent data){
+        mBluetoothFragment.connectDevice(data);
+    }
+
 }
