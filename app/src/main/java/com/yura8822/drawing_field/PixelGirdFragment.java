@@ -33,7 +33,7 @@ public class PixelGirdFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pixel_gird, container, false);
-        mPixelGird = view.findViewById(R.id.pixel_gird);
+        mPixelGird = view.findViewById(R.id.pixel_gird_frame);
         return view;
     }
 

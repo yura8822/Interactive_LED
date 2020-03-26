@@ -226,7 +226,7 @@ public class BluetoothFragment extends Fragment {
         if (extras == null) {
             return;
         }
-        String address = extras.getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+        String address = extras.getString("com.yura8822.extra_device_list");
         // Get the BluetoothDevice object
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         // Attempt to connect to the device

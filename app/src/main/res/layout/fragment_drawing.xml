@@ -1,10 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frameLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".main.DrawingFragment">
+
+    <FrameLayout
+        android:id="@+id/pixel_gird_frame"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/palette_last_colors"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.yura8822.drawing_field.PixelGird
+            android:id="@+id/pixel_gird"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            app:cellSpacing="@integer/cellSpacing"
+            app:quantityColumns="@integer/quantity_columns"
+            app:quantityRows="@integer/quantity_rows" />
+    </FrameLayout>
+
+    <com.yura8822.drawing_field.PaletteLastColors
+        android:id="@+id/palette_last_colors"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        app:cellSpacingPL="8"
+        app:layout_constraintBottom_toTopOf="@+id/drawing_tools"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pixel_gird_frame"
+        app:quantityColumnsPL="8"
+        app:quantityRowsPL="2" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/drawing_tools"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.appcompat.widget.ActionMenuView
+            android:id="@+id/drawing_tools_menu"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="10dp">
+
+        </androidx.appcompat.widget.ActionMenuView>
+    </androidx.appcompat.widget.Toolbar>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

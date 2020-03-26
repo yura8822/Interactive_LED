@@ -114,6 +114,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
         switch (item.getItemId()){
             case R.id.device_list:{
                 checkPermissionsAndStartDeviceList();
+                break;
             }
         }
         return super.onOptionsItemSelected(item);

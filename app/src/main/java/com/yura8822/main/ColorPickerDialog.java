@@ -1,8 +1,10 @@
-package com.yura8822.drawing_field;
+package com.yura8822.main;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,14 +19,8 @@ import com.yura8822.R;
 
 public class ColorPickerDialog extends DialogFragment {
     private final static String TAG = "ColorPickerDialog";
-
-    public final static String DIALOG_COLOR_PICKER = "color_picker";
-
-    public interface FragmentListenerColorPicker{
-        void fragmentColorSelected(int color);
-    }
-
-    private FragmentListenerColorPicker fragmentListenerColorPicker;
+    public final static String DIALOG_COLOR_PICKER = "com.yura8822.dialog_color_picker";
+    private final static String EXTRA_COLOR = "com.yura8822.extra_color";
 
     private ColorPicker mColorPicker;
 
@@ -34,8 +30,6 @@ public class ColorPickerDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder colorPickerDialog = new AlertDialog.Builder(getActivity());
-
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
@@ -45,25 +39,23 @@ public class ColorPickerDialog extends DialogFragment {
         //add toolbar
         Toolbar toolbar = view.findViewById(R.id.toolbar_color_picker_dialog);
         toolbar.setTitle(R.string.color_picker);
-        toolbar.setLogo(R.drawable.baseline_color_lens_black_18dp);
+        toolbar.setLogo(R.drawable.ic_select_color);
 
         //get instance ColorPicker
         mColorPicker = view.findViewById(R.id.color_picker);
         mColorPicker.setListenerColorPicker(listenerColorPicker);
 
         // Inflate and set the layout for the dialog
-        colorPickerDialog.setView(view)
+        AlertDialog.Builder colorPickerDialog = new AlertDialog.Builder(getActivity())
+                .setView(view)
                 // Add action buttons
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        if (fragmentListenerColorPicker != null){
-                            fragmentListenerColorPicker.fragmentColorSelected(mColorPicker.getResultColor());
-                            Log.d(TAG, "onClick() -> "  + String.valueOf(mColorPicker.getResultColor()));
-                        }
+                        sendResult(Activity.RESULT_OK, mColorPicker.getResultColor());
                     }
                 })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         ColorPickerDialog.this.getDialog().cancel();
                     }
@@ -75,16 +67,22 @@ public class ColorPickerDialog extends DialogFragment {
     private ColorPicker.ListenerColorPicker listenerColorPicker = new ColorPicker.ListenerColorPicker() {
         @Override
         public void colorSelected(int color) {
-            if (fragmentListenerColorPicker != null){
-                fragmentListenerColorPicker.fragmentColorSelected(color);
-                Log.d(TAG, "colorSelected() -> " + String.valueOf(color));
-            }
+            sendResult(Activity.RESULT_OK, color);
             ColorPickerDialog.this.getDialog().cancel();
         }
     };
 
-    public void setFragmentListenerColorPicker(FragmentListenerColorPicker fragmentListenerColorPicker) {
-        this.fragmentListenerColorPicker = fragmentListenerColorPicker;
-        Log.d(TAG, "setFragmentListenerColorPicker()");
+    private void sendResult(int resultCode, int color) {
+        if (getTargetFragment() == null) {
+            return;
+        }
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_COLOR, color);
+
+        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+    }
+
+    public static int getColor(Intent data){
+        return data.getIntExtra(EXTRA_COLOR, 0);
     }
 }

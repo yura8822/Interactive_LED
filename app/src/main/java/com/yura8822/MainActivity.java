@@ -24,7 +24,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.tabs.TabLayout;
 import com.yura8822.bluetooth.BluetoothFragment;
 import com.yura8822.database.GalleryDBHelper;
-import com.yura8822.drawing_field.ColorPickerDialog;
+import com.yura8822.main.ColorPickerDialog;
 import com.yura8822.drawing_field.PaletteLastColorsFragment;
 import com.yura8822.drawing_field.PixelGirdFragment;
 import com.yura8822.gallery.GalleryImageActivity;
@@ -82,18 +82,18 @@ public class MainActivity extends AppCompatActivity {
 
         mColorPickerDialog = new ColorPickerDialog();
         //listener registration for color selection
-        mColorPickerDialog.setFragmentListenerColorPicker(new ColorPickerDialog.FragmentListenerColorPicker() {
-            @Override
-            public void fragmentColorSelected(int color) {
-                //set painting color
-                mPixelGirdFragment.setColor(color);
-                //set color to PaletteLastColor
-                mPaletteLastColorsFragment.updatePaletteLastColors(color);
-                //display selected color in toolbar
-                mImageViewCurrentColor.setColorFilter(color);
-                Log.d(TAG, "selected color = " + String.valueOf(color));
-            }
-        });
+//        mColorPickerDialog.setFragmentListenerColorPicker(new ColorPickerDialog.FragmentListenerColorPicker() {
+//            @Override
+//            public void fragmentColorSelected(int color) {
+//                //set painting color
+//                mPixelGirdFragment.setColor(color);
+//                //set color to PaletteLastColor
+//                mPaletteLastColorsFragment.updatePaletteLastColors(color);
+//                //display selected color in toolbar
+//                mImageViewCurrentColor.setColorFilter(color);
+//                Log.d(TAG, "selected color = " + String.valueOf(color));
+//            }
+//        });
 
         mPaletteLastColorsFragment = new PaletteLastColorsFragment();
         ////listener registration for palette colors
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
 
         //initializing bottom tablayout to switch modes
         TabLayout tabLayoutBotom = findViewById(R.id.tabs_bottom);
-        tabLayoutBotom.addTab(tabLayoutBotom.newTab().setIcon(R.drawable.baseline_color_lens_black_18dp));
+//        tabLayoutBotom.addTab(tabLayoutBotom.newTab().setIcon(R.drawable.baseline_color_lens_black_18dp));
         tabLayoutBotom.addTab(tabLayoutBotom.newTab().setIcon(R.drawable.eraser));
         tabLayoutBotom.addTab(tabLayoutBotom.newTab().setIcon(R.drawable.baseline_format_color_reset_black_18dp));
         tabLayoutBotom.addOnTabSelectedListener(tabSelectedListenerBottom);
