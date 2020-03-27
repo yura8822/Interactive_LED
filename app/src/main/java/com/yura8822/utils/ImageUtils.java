@@ -1,4 +1,4 @@
-package com.yura8822.gallery;
+package com.yura8822.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -22,18 +22,10 @@ import com.yura8822.R;
 public class ImageUtils {
     private static final String TAG = "ImageUtils";
 
-    public static Bitmap createBitmapFromView(View view) {
-
-        Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(),
-                view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+    public static Bitmap getBitmapFromView(View view) {
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
-        Drawable background = view.getBackground();
-
-        if (background != null) {
-            background.draw(canvas);
-        }
         view.draw(canvas);
-
         return bitmap;
     }
 

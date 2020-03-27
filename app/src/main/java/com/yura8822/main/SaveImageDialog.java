@@ -1,11 +1,12 @@
-package com.yura8822.gallery;
+package com.yura8822.main;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -17,28 +18,19 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
 import com.yura8822.R;
+import com.yura8822.utils.ImageUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class SaveImageDialog extends DialogFragment {
     private static final String TAG = "SaveImageDialog";
-
-    public static final String DIALOG_SAVE_IMAGE = "save image";
+    public static final String DIALOG_SAVE_IMAGE = "com.yura8822.SaveImageDialog";
+    private static final String EXTRA_SAVED_IMAGE_NAME = "com.yura8822.extra_saved_image_name";
 
     private EditText mEditTextName;
     private ImageView mImageView;
-
-    public interface GenerateImage{
-        void setViewForGenerateImage(ImageView imageView);
-    }
-
-    public interface ConversionImage{
-        void saveImage(String nameImage);
-    }
-
-    private GenerateImage mGenerateImage;
-    private ConversionImage mConversionImage;
 
     public SaveImageDialog() {
         // Required empty public constructor
@@ -54,41 +46,29 @@ public class SaveImageDialog extends DialogFragment {
 
         //add toolbar
         Toolbar toolbar = view.findViewById(R.id.toolbar_save_image_dialog);
-        toolbar.setTitle(R.string.save_image);
-        toolbar.setLogo(R.drawable.baseline_save_alt_black_18dp);
+        toolbar.setTitle(R.string.title_save_img);
+        toolbar.setLogo(R.drawable.ic_save_img);
 
         //init view
         mEditTextName = view.findViewById(R.id.name_image);
         mImageView = view.findViewById(R.id.save_image);
 
-        //set image from View in saveImageDialog
-        if (mGenerateImage != null){
-            mGenerateImage.setViewForGenerateImage(mImageView);
-        }else{
-            Log.d(TAG, "you must implement the interface setGenerateImage(GenerateImage generateImage)");
-        }
+        View pixelGirdView = getActivity().findViewById(R.id.pixel_gird);
+        mImageView.setImageBitmap(ImageUtils.getBitmapFromView(pixelGirdView));
 
-
-        AlertDialog.Builder builderDialog = new AlertDialog.Builder(getActivity());
         // Inflate and set the layout for the dialog
-        builderDialog.setView(view)
+        AlertDialog.Builder builderDialog = new AlertDialog.Builder(getActivity())
+                .setView(view)
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //conversion of an picture array   into a string for saving in the database
-                        if (mConversionImage != null){
-                            String imageName = mEditTextName.getText().toString();
-                            if (!imageName.isEmpty()){
-                                mConversionImage.saveImage(imageName);
-                            }else {
-                                SimpleDateFormat sd = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-                                imageName = sd.format(new Date());
-                                mConversionImage.saveImage(imageName);
-                            }
-
-                        }else {
-                            Log.d(TAG, "you must implement the interface setConversionImage(ConversionImage conversionImage)");
+                        String nameImg = mEditTextName.getText().toString();
+                        if (nameImg.isEmpty()){
+                            SimpleDateFormat sd = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss",
+                                    Locale.getDefault());
+                            nameImg = sd.format(new Date());
                         }
+                        sendResult(Activity.RESULT_OK, nameImg);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -97,15 +77,20 @@ public class SaveImageDialog extends DialogFragment {
                         SaveImageDialog.this.getDialog().cancel();
                     }
                 });
-
         return builderDialog.create();
     }
 
-    public void setGenerateImage(GenerateImage generateImage) {
-        mGenerateImage = generateImage;
+    private void sendResult(int resultCode, String nameImg) {
+        if (getTargetFragment() == null) {
+            return;
+        }
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_SAVED_IMAGE_NAME, nameImg);
+
+        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
     }
 
-    public void setConversionImage(ConversionImage conversionImage) {
-        mConversionImage = conversionImage;
+    public static String getNameImg(Intent data){
+        return data.getStringExtra(EXTRA_SAVED_IMAGE_NAME);
     }
 }

@@ -18,19 +18,16 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.tabs.TabLayout;
 import com.yura8822.bluetooth.BluetoothFragment;
 import com.yura8822.database.GalleryDBHelper;
-import com.yura8822.main.ColorPickerDialog;
-import com.yura8822.drawing_field.PaletteLastColorsFragment;
-import com.yura8822.drawing_field.PixelGirdFragment;
 import com.yura8822.gallery.GalleryImageActivity;
 import com.yura8822.gallery.Image;
-import com.yura8822.gallery.ImageUtils;
-import com.yura8822.gallery.SaveImageDialog;
+import com.yura8822.utils.ImageUtils;
+import com.yura8822.main.SaveImageDialog;
+import com.yura8822.main.ColorPickerDialog;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,9 +36,9 @@ public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private BluetoothFragment mBluetoothFragment;
-    private PixelGirdFragment mPixelGirdFragment;
+    //    private PixelGirdFragment mPixelGirdFragment;
     private ColorPickerDialog mColorPickerDialog;
-    private PaletteLastColorsFragment mPaletteLastColorsFragment;
+    //    private PaletteLastColorsFragment mPaletteLastColorsFragment;
     private SaveImageDialog mSaveImageDialog;
 
     private GalleryDBHelper mGalleryDBHelper;
@@ -71,14 +68,14 @@ public class MainActivity extends AppCompatActivity {
 
         mBluetoothFragment = new BluetoothFragment();
 
-        mPixelGirdFragment = new PixelGirdFragment();
-        //registering the listener to send the grid array in case of changes
-        mPixelGirdFragment.setFragmentListenerPixelGird(new PixelGirdFragment.FragmentListenerPixelGird() {
-            @Override
-            public void sendBluetooth(int[][] colorList) {
-                mBluetoothFragment.sendMessage(colorList);
-            }
-        });
+//        mPixelGirdFragment = new PixelGirdFragment();
+//        //registering the listener to send the grid array in case of changes
+//        mPixelGirdFragment.setFragmentListenerPixelGird(new PixelGirdFragment.FragmentListenerPixelGird() {
+//            @Override
+//            public void sendBluetooth(int[][] colorList) {
+//                mBluetoothFragment.sendMessage(colorList);
+//            }
+//        });
 
         mColorPickerDialog = new ColorPickerDialog();
         //listener registration for color selection
@@ -95,41 +92,41 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-        mPaletteLastColorsFragment = new PaletteLastColorsFragment();
+//        mPaletteLastColorsFragment = new PaletteLastColorsFragment();
         ////listener registration for palette colors
-        mPaletteLastColorsFragment.setFragmentListenerPaletteLastColors(new PaletteLastColorsFragment.FragmentListenerPaletteLastColors() {
-            @Override
-            public void setColorPainting(int color) {
-                mPixelGirdFragment.setColor(color);
-                //display selected color in toolbar
-                mImageViewCurrentColor.setColorFilter(color);
-            }
-        });
+//        mPaletteLastColorsFragment.setFragmentListenerPaletteLastColors(new PaletteLastColorsFragment.FragmentListenerPaletteLastColors() {
+//            @Override
+//            public void setColorPainting(int color) {
+////                mPixelGirdFragment.setColor(color);
+//                //display selected color in toolbar
+//                mImageViewCurrentColor.setColorFilter(color);
+//            }
+//        });
 
         mSaveImageDialog = new SaveImageDialog();
         //listener registration for generate image
-        mSaveImageDialog.setGenerateImage(new SaveImageDialog.GenerateImage() {
-            @Override
-            public void setViewForGenerateImage(ImageView imageView) {
-                //set image from pixelGird in saveImageDialog
-                imageView.setImageBitmap(ImageUtils.createBitmapFromView(mPixelGirdFragment.getPixelGird()));
-            }
-        });
+//        mSaveImageDialog.setGenerateImage(new SaveImageDialog.GenerateImage() {
+//            @Override
+//            public void setViewForGenerateImage(ImageView imageView) {
+//                //set image from pixelGird in saveImageDialog
+////                imageView.setImageBitmap(ImageUtils.createBitmapFromView(mPixelGirdFragment.getPixelGird()));
+//            }
+//        });
         //listener registration for save image in data bases
-        mSaveImageDialog.setConversionImage(new SaveImageDialog.ConversionImage() {
-            @Override
-            public void saveImage(String nameImage) {
-                //parse array image to string
-                String image = ImageUtils.imageArraryToString(mPixelGirdFragment.getArrayPixelGird());
-                mGalleryDBHelper.insert(nameImage, image);
-                Log.d(TAG, "saved image with name " + nameImage);
-            }
-        });
+//        mSaveImageDialog.setConversionImage(new SaveImageDialog.ConversionImage() {
+//            @Override
+//            public void saveImage(String nameImage) {
+//                //parse array image to string
+////                String image = ImageUtils.imageArraryToString(mPixelGirdFragment.getArrayPixelGird());
+////                mGalleryDBHelper.insert(nameImage, image);
+//                Log.d(TAG, "saved image with name " + nameImage);
+//            }
+//        });
 
         FragmentTransaction fm = getSupportFragmentManager().beginTransaction();
         fm.replace(R.id.bluetooth_container, mBluetoothFragment);
-        fm.replace(R.id.mode_container, mPixelGirdFragment);
-        fm.replace(R.id.last_color_container, mPaletteLastColorsFragment);
+//        fm.replace(R.id.mode_container, mPixelGirdFragment);
+//        fm.replace(R.id.last_color_container, mPaletteLastColorsFragment);
         fm .commit();
 
         //initializing main tablayout to switch modes
@@ -238,25 +235,25 @@ public class MainActivity extends AppCompatActivity {
             int[][] colorList = ImageUtils.stringArrayToIntArray(getResources().getInteger(R.integer.quantity_rows),
                     getResources().getInteger(R.integer.quantity_columns), image.getImage());
             //set color list in pixel gird and draw
-            mPixelGirdFragment.loadImage(colorList);
+//            mPixelGirdFragment.loadImage(colorList);
         }
     }
 
     private TabLayout.BaseOnTabSelectedListener tabSelectedListenerMain = new TabLayout.OnTabSelectedListener() {
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
-            switch (tab.getPosition()){
-                case 0:
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.mode_container, mPixelGirdFragment).commit();
-                    Log.d(TAG, "replace mPixelGirdFragment");
-                    break;
-                case 1:
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.mode_container, new Fragment()).commit();
-                    Log.d(TAG, "mode container item 2");
-                    break;
-            }
+//            switch (tab.getPosition()){
+//                case 0:
+//                    getSupportFragmentManager().beginTransaction()
+////                            .replace(R.id.mode_container, mPixelGirdFragment).commit();
+//                    Log.d(TAG, "replace mPixelGirdFragment");
+//                    break;
+//                case 1:
+//                    getSupportFragmentManager().beginTransaction()
+//                            .replace(R.id.mode_container, new Fragment()).commit();
+//                    Log.d(TAG, "mode container item 2");
+//                    break;
+//            }
         }
 
         @Override
@@ -278,12 +275,12 @@ public class MainActivity extends AppCompatActivity {
                     mColorPickerDialog.show(getSupportFragmentManager(), ColorPickerDialog.DIALOG_COLOR_PICKER);
                     break;
                 case 1:
-                    mPixelGirdFragment.setColor(Color.BLACK);
+//                    mPixelGirdFragment.setColor(Color.BLACK);
                     //display selected color in toolbar
                     mImageViewCurrentColor.setColorFilter(Color.BLACK);
                     break;
                 case 2:
-                    mPixelGirdFragment.resetPaint();
+//                    mPixelGirdFragment.resetPaint();
                     break;
             }
         }
@@ -300,12 +297,12 @@ public class MainActivity extends AppCompatActivity {
                     mColorPickerDialog.show(getSupportFragmentManager(), ColorPickerDialog.DIALOG_COLOR_PICKER);
                     break;
                 case 1:
-                    mPixelGirdFragment.setColor(Color.BLACK);
+//                    mPixelGirdFragment.setColor(Color.BLACK);
                     //display selected color in toolbar
                     mImageViewCurrentColor.setColorFilter(Color.BLACK);
                     break;
                 case 2:
-                    mPixelGirdFragment.resetPaint();
+//                    mPixelGirdFragment.resetPaint();
                     break;
             }
         }

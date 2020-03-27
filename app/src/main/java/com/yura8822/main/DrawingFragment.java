@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import com.yura8822.R;
 public class DrawingFragment extends Fragment {
     private static final String TAG = "DrawingFragment";
     private final static int REQUEST_COLOR = 0;
+    public final static int REQUEST_SAVE_IMG = 1;
 
     public interface OnSendListener {
         void sendToBluetooth(int[][] colorList);
@@ -90,6 +92,11 @@ public class DrawingFragment extends Fragment {
             int color = ColorPickerDialog.getColor(data);
             mPaletteLastColors.addColor(color);
             updateSelectedColor(color);
+        }
+
+        if (requestCode == REQUEST_SAVE_IMG){
+            String nameImg = SaveImageDialog.getNameImg(data);
+            Log.d(TAG, "OnActivityResult ->" + nameImg);
         }
     }
 

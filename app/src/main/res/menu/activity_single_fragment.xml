@@ -26,4 +26,10 @@
         android:title="@string/device_list"
         android:orderInCategory="4"
         app:showAsAction="never" />
+
+    <item android:id="@+id/save_img_dialog"
+        android:title="@string/save_img"
+        android:orderInCategory="5"
+        app:showAsAction="never"/>
+
 </menu>

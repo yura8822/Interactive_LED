@@ -9,7 +9,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,10 +23,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.yura8822.R;
 import com.yura8822.database.GalleryDBHelper;
+import com.yura8822.utils.ImageUtils;
 
-import java.nio.channels.SelectableChannel;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class GalleryImageActivity extends AppCompatActivity {

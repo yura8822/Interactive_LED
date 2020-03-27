@@ -23,6 +23,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.yura8822.bluetooth.BluetoothFragment;
 import com.yura8822.device_search.DeviceListActivity;
+import com.yura8822.main.SaveImageDialog;
 import com.yura8822.main.DrawingFragment;
 
 public abstract class SingleFragmentActivity extends AppCompatActivity implements BluetoothFragment.OnBluetoothConnected,
@@ -107,6 +108,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
         if (this.getClass() == DeviceListActivity.class){
             menu.findItem(R.id.device_list).setVisible(false);
         }
+
         return true;
     }
 
@@ -116,6 +118,14 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
         switch (item.getItemId()){
             case R.id.device_list:{
                 checkPermissionsAndStartDeviceList();
+                return true;
+            }
+
+            case R.id.save_img_dialog:{
+                SaveImageDialog saveImageDialog = new SaveImageDialog();
+                saveImageDialog.setTargetFragment(getSupportFragmentManager().
+                        findFragmentById(R.id.fragment_container), DrawingFragment.REQUEST_SAVE_IMG);
+                saveImageDialog.show(getSupportFragmentManager(), SaveImageDialog.DIALOG_SAVE_IMAGE);
                 return true;
             }
         }

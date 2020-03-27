@@ -41,6 +41,7 @@
     <string name="bluetooth_off">Bluetooth выключен</string>
     <string name="bluetooth_connected">Соединен</string>
     <string name="device_list">Найти устройства</string>
+    <string name="save_img">Сохранить</string>
 
     <!--    DeviceListFragment-->
     <string name="name_devices">Имя:</string>
@@ -64,7 +65,7 @@
     <string name="value">Яркость</string>
     <string name="color_picker">Палитра цветов</string>
 
-
-
+    <!--    SaveImageDialog-->
+    <string name="title_save_img">Сохранить изображение</string>
 
 </resources>
