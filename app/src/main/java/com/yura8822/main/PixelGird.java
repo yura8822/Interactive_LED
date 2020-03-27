@@ -1,4 +1,4 @@
-package com.yura8822.drawing_field;
+package com.yura8822.main;
 
 import android.content.Context;
 import android.content.res.TypedArray;

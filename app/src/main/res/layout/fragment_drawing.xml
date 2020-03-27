@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.yura8822.drawing_field.PixelGird
+        <com.yura8822.main.PixelGird
             android:id="@+id/pixel_gird"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
             app:quantityRows="@integer/quantity_rows" />
     </FrameLayout>
 
-    <com.yura8822.drawing_field.PaletteLastColors
+    <com.yura8822.main.PaletteLastColors
         android:id="@+id/palette_last_colors"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

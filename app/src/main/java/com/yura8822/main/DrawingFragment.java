@@ -11,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,8 +19,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.yura8822.R;
-import com.yura8822.drawing_field.PaletteLastColors;
-import com.yura8822.drawing_field.PixelGird;
 
 public class DrawingFragment extends Fragment {
     private static final String TAG = "DrawingFragment";
