@@ -14,11 +14,13 @@ public final class GalleryDBContract {
             public static final String ID = "_id";
             public static final String NAME = "name";
             public static final String IMAGE = "image";
+            public static final String DATE = "date";
         }
 
         public static final String SQL_CREATE_IMAGE_GALLERY = "CREATE TABLE " + TABLE_NAME + " (" +
                 Colls.ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 Colls.NAME + " TEXT," +
-                Colls.IMAGE+ " TEXT)";
+                Colls.IMAGE + " TEXT,"+
+                Colls.DATE + " INTEGER)";
     }
 }

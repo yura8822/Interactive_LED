@@ -32,7 +32,7 @@
         app:showAsAction="never"/>
 
     <item android:id="@+id/save_image_menu"
-        android:title="@string/save"
+        android:title="aaa"
         android:orderInCategory="7"
         app:showAsAction="never"/>
 

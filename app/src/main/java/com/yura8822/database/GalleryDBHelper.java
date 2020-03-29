@@ -8,8 +8,6 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.yura8822.gallery.Image;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,7 +89,7 @@ public class GalleryDBHelper extends SQLiteOpenHelper {
 
             image.setId(cursor.getLong(cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.ID)));
             image.setName(cursor.getString(cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.NAME)));
-            image.setImage(cursor.getString(cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.IMAGE)));
+//            image.setImage(cursor.getString(cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.IMAGE)));
 
             db.close();
             cursor.close();
@@ -123,7 +121,7 @@ public class GalleryDBHelper extends SQLiteOpenHelper {
                 Image image = new Image();
                 image.setId(cursor.getLong(cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.ID)));
                 image.setName(cursor.getString(cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.NAME)));
-                image.setImage(cursor.getString(cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.IMAGE)));
+//                image.setImage(cursor.getString(cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.IMAGE)));
                 imageArrayList.add(image);
                 cursor.moveToNext();
             }

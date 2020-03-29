@@ -23,11 +23,10 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.tabs.TabLayout;
 import com.yura8822.bluetooth.BluetoothFragment;
 import com.yura8822.database.GalleryDBHelper;
+import com.yura8822.database.Image;
 import com.yura8822.gallery.GalleryImageActivity;
-import com.yura8822.gallery.Image;
-import com.yura8822.utils.ImageUtils;
-import com.yura8822.main.SaveImageDialog;
 import com.yura8822.main.ColorPickerDialog;
+import com.yura8822.main.SaveImageDialog;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -232,8 +231,8 @@ public class MainActivity extends AppCompatActivity {
             Image image = mGalleryDBHelper.findById(GalleryImageActivity.getImageID(data));
 
             //parse string image in int[][] immage
-            int[][] colorList = ImageUtils.stringArrayToIntArray(getResources().getInteger(R.integer.quantity_rows),
-                    getResources().getInteger(R.integer.quantity_columns), image.getImage());
+//            int[][] colorList = ImageUtils.stringArrayToIntArray(getResources().getInteger(R.integer.quantity_rows),
+//                    getResources().getInteger(R.integer.quantity_columns), image.getImage());
             //set color list in pixel gird and draw
 //            mPixelGirdFragment.loadImage(colorList);
         }

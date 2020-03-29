@@ -1,27 +1,30 @@
-package com.yura8822.gallery;
+package com.yura8822.database;
 
 public class Image {
 
     private long id;
     private String name;
-    private String image;
+    private byte[] imageByteArray;
+    private long date;
     private boolean isChecked;
 
     public Image() {
     }
 
-    public Image(long id, String name, String image) {
+    public Image(long id, String name, byte[] image, long date) {
         this.id = id;
         this.name = name;
-        this.image = image;
+        this.imageByteArray = image;
+        this.date = date;
+    }
+
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public long getId() {
         return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -32,12 +35,20 @@ public class Image {
         this.name = name;
     }
 
-    public String getImage() {
-        return image;
+    public byte[] getImage() {
+        return imageByteArray;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImage(byte[] image) {
+        this.imageByteArray = image;
+    }
+
+    public long getDate() {
+        return date;
+    }
+
+    public void setDate(long date) {
+        this.date = date;
     }
 
     public boolean isChecked() {

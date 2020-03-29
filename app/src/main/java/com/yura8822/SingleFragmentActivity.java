@@ -107,6 +107,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
 
         if (this.getClass() == DeviceListActivity.class){
             menu.findItem(R.id.device_list).setVisible(false);
+            menu.findItem(R.id.save_img_dialog).setVisible(false);
         }
 
         return true;

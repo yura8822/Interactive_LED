@@ -13,7 +13,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -23,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.yura8822.R;
 import com.yura8822.database.GalleryDBHelper;
-import com.yura8822.utils.ImageUtils;
+import com.yura8822.database.Image;
 
 import java.util.List;
 
@@ -168,8 +167,8 @@ public class GalleryImageActivity extends AppCompatActivity {
 
         void bind(Image image){
             mImage = image;
-            mTextViewName.setText(mImage.getName());
-            mImageView.setImageDrawable(ImageUtils.StringToDrawble(mContext, mImage.getImage()));
+//            mTextViewName.setText(mImage.getName());
+//            mImageView.setImageDrawable(ImageUtils.StringToDrawble(mContext, mImage.getImage()));
             //register listener
             itemView.setOnClickListener(mOnClickListener);
             itemView.setOnLongClickListener(mOnLongClickListener);

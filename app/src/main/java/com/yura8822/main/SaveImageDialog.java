@@ -59,7 +59,7 @@ public class SaveImageDialog extends DialogFragment {
         // Inflate and set the layout for the dialog
         AlertDialog.Builder builderDialog = new AlertDialog.Builder(getActivity())
                 .setView(view)
-                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String nameImg = mEditTextName.getText().toString();

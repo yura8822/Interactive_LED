@@ -22,10 +22,7 @@
     <string name="gallery_image">Галерея</string>
 
 
-    <!--    SaveImageDialog-->
-    <string name="hint_edit_text_save_image">Введите название</string>
-    <string name="save">Сохранить</string>
-    <string name="save_image">Сохранить изображение</string>
+
 
     <!--    card_image_item.xml-->
     <string name="select_card">выбрать</string>
@@ -67,5 +64,6 @@
 
     <!--    SaveImageDialog-->
     <string name="title_save_img">Сохранить изображение</string>
+    <string name="hint_edit_text_save_image">Введите название</string>
 
 </resources>
