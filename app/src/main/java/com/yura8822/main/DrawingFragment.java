@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,6 +19,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.yura8822.R;
+import com.yura8822.database.Image;
+import com.yura8822.database.ImageLab;
+import com.yura8822.utils.ImageUtils;
+
+import java.util.Date;
 
 public class DrawingFragment extends Fragment {
     private static final String TAG = "DrawingFragment";
@@ -96,7 +100,11 @@ public class DrawingFragment extends Fragment {
 
         if (requestCode == REQUEST_SAVE_IMG){
             String nameImg = SaveImageDialog.getNameImg(data);
-            Log.d(TAG, "OnActivityResult ->" + nameImg);
+            Image image = new Image();
+            image.setName(nameImg);
+            image.setDate(new Date().getTime());
+            image.setImage(ImageUtils.intArrayToByteArray(mPixelGird.getColorList()));
+            ImageLab.get(getContext().getApplicationContext()).insertImage(image);
         }
     }
 

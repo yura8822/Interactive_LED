@@ -1,6 +1,5 @@
 package com.yura8822.utils;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -29,31 +28,37 @@ public class ImageUtils {
         return bitmap;
     }
 
-    public static String imageArraryToString(int[][] array){
-        StringBuilder sb = new StringBuilder();
-        for (int[] out : array){
-            for (int value : out){
-                sb.append(value).append(" ");
+    public static byte[] intArrayToByteArray(int[][] array){
+      byte[] bytes = new byte[array.length * array[0].length * 3];
+      int index = -1;
+        for (int[] ints : array) {
+            for (int anInt : ints) {
+                bytes[++index] = (byte) Color.red(anInt);
+                bytes[++index] = (byte) Color.green(anInt);
+                bytes[++index] = (byte) Color.blue(anInt);
             }
         }
-        return sb.toString();
+      return bytes;
     }
 
-    public static int[][] stringArrayToIntArray(int quantityRows, int quantityColumns, String imageString){
+    public static int[][] byteArrayToIntArray(int quantityRows, int quantityColumns, byte[] bytes){
         int[][] colorList = new int[quantityRows][quantityColumns];
-        String[] colorListString = imageString.split(" ");
-
-        int count = 0;
+        int index = -1;
         for (int i = 0; i < colorList.length; i++){
             for (int j = 0; j < colorList[i].length; j++){
-                colorList[i][j] = Integer.parseInt(colorListString[count++]);
+                colorList[i][j] = Color.rgb(
+                        bytes[++index],
+                        bytes[++index],
+                        bytes[++index]);
             }
         }
         return colorList;
     }
 
-    public static Drawable StringToDrawble(Context context, String imageString) {
-        return new DrawblePixelGird(context, imageString);
+
+
+    public static Drawable StringToDrawble(Context context, byte[] bytes) {
+        return new DrawblePixelGird(context, bytes);
     }
 
     private static class DrawblePixelGird extends Drawable{
@@ -68,7 +73,7 @@ public class ImageUtils {
         private int color;
         private Paint paintRect;
 
-        private DrawblePixelGird(Context context, String imageString){
+        private DrawblePixelGird(Context context, byte[] bytes){
             Resources resources = context.getResources();
             quantityColumns = resources.getInteger(R.integer.quantity_columns);
             quantityRows = resources.getInteger(R.integer.quantity_rows);
@@ -89,7 +94,7 @@ public class ImageUtils {
             }
 
             //init color list array
-            colorList = stringArrayToIntArray(quantityRows, quantityColumns, imageString);
+            colorList = byteArrayToIntArray(quantityRows, quantityColumns, bytes);
 
             //init paint
             color = Color.BLACK;

@@ -157,10 +157,6 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
 
     @Override
     public void sendToBluetooth(int[][] colorList) {
-        send(colorList);
-    }
-
-    private void send(int[][] colorList){
         mBluetoothFragment.sendMessage(colorList);
     }
 
