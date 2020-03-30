@@ -1,6 +1,5 @@
 package com.yura8822.utils;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -55,13 +54,11 @@ public class ImageUtils {
         return colorList;
     }
 
-
-
-    public static Drawable StringToDrawble(Context context, byte[] bytes) {
-        return new DrawblePixelGird(context, bytes);
+    public static Drawable byteArrayToDrawable(Resources resources, byte[] bytes) {
+        return new DrawablePixelGird(resources, bytes);
     }
 
-    private static class DrawblePixelGird extends Drawable{
+    private static class DrawablePixelGird extends Drawable{
         private int quantityColumns;
         private int quantityRows;
         private int cellSpacing;
@@ -73,15 +70,14 @@ public class ImageUtils {
         private int color;
         private Paint paintRect;
 
-        private DrawblePixelGird(Context context, byte[] bytes){
-            Resources resources = context.getResources();
-            quantityColumns = resources.getInteger(R.integer.quantity_columns);
-            quantityRows = resources.getInteger(R.integer.quantity_rows);
-            cellSpacing = resources.getInteger(R.integer.cellSpacing)/2;
+        private DrawablePixelGird(Resources resources, byte[] bytes){
+            this.quantityColumns = resources.getInteger(R.integer.quantity_columns);
+            this.quantityRows = resources.getInteger(R.integer.quantity_rows);
+            this.cellSpacing = resources.getInteger(R.integer.cellSpacing)/2;
 
             // cell size calculation
-            int sizeW = (int) resources.getDimension(R.dimen.image_card);
-            int sizeH = (int) resources.getDimension(R.dimen.image_card);
+            int sizeW = (int) resources.getDimension(R.dimen.image_card_width);
+            int sizeH = (int) resources.getDimension(R.dimen.image_card_height);
             Log.d(TAG, "sizeH = " + sizeH + " sizeW = " + sizeW);
             if (quantityColumns > quantityRows){
                 cellSize = sizeW / quantityColumns;

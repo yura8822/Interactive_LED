@@ -3,7 +3,7 @@ package com.yura8822.database;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
-import static com.yura8822.database.GalleryDBContract.*;
+import static com.yura8822.database.DBContract.*;
 
 public class ImageCursorWrapper extends CursorWrapper {
     public ImageCursorWrapper(Cursor cursor) {

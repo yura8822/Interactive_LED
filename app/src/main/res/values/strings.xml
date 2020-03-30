@@ -22,9 +22,7 @@
     <string name="gallery_image">Галерея</string>
 
 
-
-
-    <!--    card_image_item.xml-->
+    <!--    list_item_image.xml-->
     <string name="select_card">выбрать</string>
 
     <!--    +++++++++++++++++++++ -->
@@ -39,6 +37,7 @@
     <string name="bluetooth_connected">Соединен</string>
     <string name="device_list">Найти устройства</string>
     <string name="save_img">Сохранить</string>
+    <string name="gallery">Галерея</string>
 
     <!--    DeviceListFragment-->
     <string name="name_devices">Имя:</string>
@@ -50,7 +49,7 @@
     <string name="scanning">Сканирование устройств....</string>
     <string name="button_scan">Сканировать устройства</string>
 
-<!--    DrawingFragment-->
+    <!--    DrawingFragment-->
     <string name="select_color">Выбрать цвет</string>
     <string name="eraser">Ластик</string>
     <string name="erase_drawing">Очистить</string>
@@ -65,5 +64,8 @@
     <!--    SaveImageDialog-->
     <string name="title_save_img">Сохранить изображение</string>
     <string name="hint_edit_text_save_image">Введите название</string>
+
+    <!--    GalleryFragment-->
+    <string name="title_bottom_toolbar_gallery">Помечено на удаление: %1$d</string>
 
 </resources>

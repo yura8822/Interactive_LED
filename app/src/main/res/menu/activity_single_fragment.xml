@@ -32,4 +32,9 @@
         android:orderInCategory="5"
         app:showAsAction="never"/>
 
+    <item android:id="@+id/gallery"
+        android:title="@string/gallery"
+        android:orderInCategory="6"
+        app:showAsAction="never"/>
+
 </menu>

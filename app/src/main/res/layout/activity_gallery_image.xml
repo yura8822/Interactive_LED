@@ -15,7 +15,7 @@
         custom:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_galerry"
+        android:id="@+id/recycler_view_galerr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="vertical"

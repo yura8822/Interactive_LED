@@ -2,9 +2,9 @@ package com.yura8822.database;
 
 import android.provider.BaseColumns;
 
-public final class GalleryDBContract {
+public final class DBContract {
 
-    public GalleryDBContract() {
+    public DBContract() {
     }
 
     public static final class ImageGalleryTable {

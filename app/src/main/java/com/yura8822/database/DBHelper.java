@@ -11,20 +11,20 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GalleryDBHelper extends SQLiteOpenHelper {
+public class DBHelper extends SQLiteOpenHelper {
     private static final String TAG = "GalleryDBHelper";
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "gallery.db";
 
-    public GalleryDBHelper(Context context){
+    public DBHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(GalleryDBContract.ImageGalleryTable.SQL_CREATE_IMAGE_GALLERY);
+        db.execSQL(DBContract.ImageGalleryTable.SQL_CREATE_IMAGE_GALLERY);
     }
 
     @Override
@@ -37,10 +37,10 @@ public class GalleryDBHelper extends SQLiteOpenHelper {
 
         try {
             ContentValues contentValues = new ContentValues();
-            contentValues.put(GalleryDBContract.ImageGalleryTable.Colls.NAME, name);
-            contentValues.put(GalleryDBContract.ImageGalleryTable.Colls.IMAGE, image);
+            contentValues.put(DBContract.ImageGalleryTable.Colls.NAME, name);
+            contentValues.put(DBContract.ImageGalleryTable.Colls.IMAGE, image);
 
-            db.insert(GalleryDBContract.ImageGalleryTable.TABLE_NAME, null, contentValues);
+            db.insert(DBContract.ImageGalleryTable.TABLE_NAME, null, contentValues);
             db.close();
         }catch (SQLiteException e){
             Log.e(TAG, "insert(String, String)");
@@ -50,14 +50,14 @@ public class GalleryDBHelper extends SQLiteOpenHelper {
     public void deleteByListId(List<Image> imageList){
         SQLiteDatabase db = this.getReadableDatabase();
         //Define 'where' part of query
-        String selection = GalleryDBContract.ImageGalleryTable.Colls.ID + " LIKE ?";
+        String selection = DBContract.ImageGalleryTable.Colls.ID + " LIKE ?";
         try {
             //find marked for deletion and delete
             for (Image value : imageList){
                 if (value.isChecked()){
                     // Specify arguments in placeholder order.
                     String[] selectionArgs = {String.valueOf(value.getId())};
-                    int detectedRow = db.delete(GalleryDBContract.ImageGalleryTable.TABLE_NAME,
+                    int detectedRow = db.delete(DBContract.ImageGalleryTable.TABLE_NAME,
                             selection, selectionArgs);
                     Log.d(TAG, "delete row = " + value.getName() + "  detectedRow = " + detectedRow);
                 }
@@ -72,23 +72,23 @@ public class GalleryDBHelper extends SQLiteOpenHelper {
         Image image = new Image();
         SQLiteDatabase db = this.getWritableDatabase();
 
-        String[] projection = {GalleryDBContract.ImageGalleryTable.Colls.ID,
-                GalleryDBContract.ImageGalleryTable.Colls.NAME,
-                GalleryDBContract.ImageGalleryTable.Colls.IMAGE
+        String[] projection = {DBContract.ImageGalleryTable.Colls.ID,
+                DBContract.ImageGalleryTable.Colls.NAME,
+                DBContract.ImageGalleryTable.Colls.IMAGE
 
         };
         // Filter results WHERE "id" = //long value
-        String selection = GalleryDBContract.ImageGalleryTable.Colls.ID + " = ?";
+        String selection = DBContract.ImageGalleryTable.Colls.ID + " = ?";
         String[] selectionArgs = {String.valueOf(id)};
 
         try{
-            Cursor cursor = db.query(GalleryDBContract.ImageGalleryTable.TABLE_NAME,
+            Cursor cursor = db.query(DBContract.ImageGalleryTable.TABLE_NAME,
                     projection, selection, selectionArgs, null, null, null);
             cursor.moveToFirst();
 
 
-            image.setId(cursor.getLong(cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.ID)));
-            image.setName(cursor.getString(cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.NAME)));
+            image.setId(cursor.getLong(cursor.getColumnIndex(DBContract.ImageGalleryTable.Colls.ID)));
+            image.setName(cursor.getString(cursor.getColumnIndex(DBContract.ImageGalleryTable.Colls.NAME)));
 //            image.setImage(cursor.getString(cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.IMAGE)));
 
             db.close();
@@ -105,22 +105,22 @@ public class GalleryDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Image> imageArrayList = new ArrayList<>();
 
-        String[] projection = {GalleryDBContract.ImageGalleryTable.Colls.ID,
-                GalleryDBContract.ImageGalleryTable.Colls.NAME,
-                GalleryDBContract.ImageGalleryTable.Colls.IMAGE
+        String[] projection = {DBContract.ImageGalleryTable.Colls.ID,
+                DBContract.ImageGalleryTable.Colls.NAME,
+                DBContract.ImageGalleryTable.Colls.IMAGE
 
         };
-        String sortOrderBy = GalleryDBContract.ImageGalleryTable.Colls.ID + " DESC";
+        String sortOrderBy = DBContract.ImageGalleryTable.Colls.ID + " DESC";
 
         try{
-            Cursor cursor = db.query(GalleryDBContract.ImageGalleryTable.TABLE_NAME,
+            Cursor cursor = db.query(DBContract.ImageGalleryTable.TABLE_NAME,
                     projection, null, null, null, null, sortOrderBy);
             cursor.moveToFirst();
 
             for (int i = 0; i < cursor.getCount(); i++){
                 Image image = new Image();
-                image.setId(cursor.getLong(cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.ID)));
-                image.setName(cursor.getString(cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.NAME)));
+                image.setId(cursor.getLong(cursor.getColumnIndex(DBContract.ImageGalleryTable.Colls.ID)));
+                image.setName(cursor.getString(cursor.getColumnIndex(DBContract.ImageGalleryTable.Colls.NAME)));
 //                image.setImage(cursor.getString(cursor.getColumnIndex(GalleryDBContract.ImageGalleryTable.Colls.IMAGE)));
                 imageArrayList.add(image);
                 cursor.moveToNext();

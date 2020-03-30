@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.yura8822.database.GalleryDBContract.ImageGalleryTable;
+import com.yura8822.database.DBContract.ImageGalleryTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class ImageLab {
 
     private ImageLab(Context context){
         mContext = context.getApplicationContext();
-        mDatabase = new GalleryDBHelper(mContext).getWritableDatabase();
+        mDatabase = new DBHelper(mContext).getWritableDatabase();
     }
 
     public static ImageLab get(Context context){

@@ -23,6 +23,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.yura8822.bluetooth.BluetoothFragment;
 import com.yura8822.device_search.DeviceListActivity;
+import com.yura8822.gallery_new.GalleryActivity;
 import com.yura8822.main.SaveImageDialog;
 import com.yura8822.main.DrawingFragment;
 
@@ -105,9 +106,10 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
             bluetoothConnecned.setVisible(false);
         }
 
-        if (this.getClass() == DeviceListActivity.class){
+        if (this.getClass() == DeviceListActivity.class || this.getClass() == GalleryActivity.class){
             menu.findItem(R.id.device_list).setVisible(false);
             menu.findItem(R.id.save_img_dialog).setVisible(false);
+            menu.findItem(R.id.gallery).setVisible(false);
         }
 
         return true;
@@ -127,6 +129,11 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
                 saveImageDialog.setTargetFragment(getSupportFragmentManager().
                         findFragmentById(R.id.fragment_container), DrawingFragment.REQUEST_SAVE_IMG);
                 saveImageDialog.show(getSupportFragmentManager(), SaveImageDialog.DIALOG_SAVE_IMAGE);
+                return true;
+            }
+
+            case R.id.gallery:{
+                startActivity(new Intent(this, GalleryActivity.class));
                 return true;
             }
         }

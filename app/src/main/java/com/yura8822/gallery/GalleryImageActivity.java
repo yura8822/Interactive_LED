@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.yura8822.R;
-import com.yura8822.database.GalleryDBHelper;
+import com.yura8822.database.DBHelper;
 import com.yura8822.database.Image;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public class GalleryImageActivity extends AppCompatActivity {
     private static final int DELETE = 1;
     private int mode;
 
-    private GalleryDBHelper mGalleryDBHelper;
+    private DBHelper mDBHelper;
     private Toolbar mToolbarUp;
     private Toolbar mToolbarDown;
     private RecyclerView mRecyclerView;
@@ -68,7 +68,7 @@ public class GalleryImageActivity extends AppCompatActivity {
         mButtonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mGalleryDBHelper.deleteByListId(mImages);
+                mDBHelper.deleteByListId(mImages);
                 for (int i = 0; i < mImages.size(); i++){
                     if (mImages.get(i).isChecked()){
                         Log.d(TAG, "name " + mImages.get(i).getName());
@@ -83,12 +83,12 @@ public class GalleryImageActivity extends AppCompatActivity {
         //init text view for output number of marked cards to delete
         mTextCount = findViewById(R.id.count_selected_textView);
 
-        mGalleryDBHelper = new GalleryDBHelper(getApplicationContext());
+        mDBHelper = new DBHelper(getApplicationContext());
 
         //init list
-        mImages = mGalleryDBHelper.findAll();
+        mImages = mDBHelper.findAll();
 
-        mRecyclerView = findViewById(R.id.recycler_view_galerry);
+        mRecyclerView = findViewById(R.id.recycler_view_galerr);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
@@ -158,11 +158,11 @@ public class GalleryImageActivity extends AppCompatActivity {
 
 
         ImageHolder(LayoutInflater inflater, ViewGroup parent, Context context){
-            super(inflater.inflate(R.layout.card_image_item, parent,false));
+            super(inflater.inflate(R.layout.list_item_image, parent,false));
             mContext = context;
-            mTextViewName = itemView.findViewById(R.id.text_view_name);
-            mImageView = itemView.findViewById(R.id.view_image);
-            mCardView = itemView.findViewById(R.id.card_view_image);
+            mTextViewName = itemView.findViewById(R.id.item_view_name);
+            mImageView = itemView.findViewById(R.id.item_view_image);
+            mCardView = itemView.findViewById(R.id.item_view_card);
         }
 
         void bind(Image image){

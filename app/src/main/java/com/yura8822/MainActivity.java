@@ -22,7 +22,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.tabs.TabLayout;
 import com.yura8822.bluetooth.BluetoothFragment;
-import com.yura8822.database.GalleryDBHelper;
+import com.yura8822.database.DBHelper;
 import com.yura8822.database.Image;
 import com.yura8822.gallery.GalleryImageActivity;
 import com.yura8822.main.ColorPickerDialog;
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     //    private PaletteLastColorsFragment mPaletteLastColorsFragment;
     private SaveImageDialog mSaveImageDialog;
 
-    private GalleryDBHelper mGalleryDBHelper;
+    private DBHelper mDBHelper;
 
     private MenuItem mBT_on;
     private MenuItem mBT_disabled;
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mGalleryDBHelper = new GalleryDBHelper(getApplicationContext());
+        mDBHelper = new DBHelper(getApplicationContext());
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
             if (data == null) {
                 return;
             }
-            Image image = mGalleryDBHelper.findById(GalleryImageActivity.getImageID(data));
+            Image image = mDBHelper.findById(GalleryImageActivity.getImageID(data));
 
             //parse string image in int[][] immage
 //            int[][] colorList = ImageUtils.stringArrayToIntArray(getResources().getInteger(R.integer.quantity_rows),
