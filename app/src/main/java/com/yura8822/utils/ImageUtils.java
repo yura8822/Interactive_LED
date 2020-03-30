@@ -46,9 +46,9 @@ public class ImageUtils {
         for (int i = 0; i < colorList.length; i++){
             for (int j = 0; j < colorList[i].length; j++){
                 colorList[i][j] = Color.rgb(
-                        bytes[++index],
-                        bytes[++index],
-                        bytes[++index]);
+                        bytes[++index] & 255,
+                        bytes[++index] & 255,
+                        bytes[++index] & 255);
             }
         }
         return colorList;
