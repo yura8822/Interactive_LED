@@ -40,7 +40,9 @@ public class ImageUtils {
       return bytes;
     }
 
-    public static int[][] byteArrayToIntArray(int quantityRows, int quantityColumns, byte[] bytes){
+    public static int[][] byteArrayToIntArray(Resources resources, byte[] bytes){
+        int quantityColumns = resources.getInteger(R.integer.quantity_columns);
+        int quantityRows = resources.getInteger(R.integer.quantity_rows);
         int[][] colorList = new int[quantityRows][quantityColumns];
         int index = -1;
         for (int i = 0; i < colorList.length; i++){
@@ -90,7 +92,7 @@ public class ImageUtils {
             }
 
             //init color list array
-            colorList = byteArrayToIntArray(quantityRows, quantityColumns, bytes);
+            colorList = byteArrayToIntArray(resources, bytes);
 
             //init paint
             color = Color.BLACK;

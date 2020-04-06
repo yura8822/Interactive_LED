@@ -1,8 +1,11 @@
 package com.yura8822.gallery_new;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,10 +29,21 @@ import java.util.List;
 
 
 public class GalleryFragment extends Fragment {
+    private static final String TAG = "GalleryFragment";
+    private static final String EXTRA_IMAGE_ID = "com.yura8822.extra_image_id";
+
+    private static final int SELECT = 0;
+    private static final int DELETE = 1;
+    private int mMode;
+
     private Toolbar mToolbarBottom;
     private RecyclerView mRecyclerViewImages;
     private GalleryAdapter mAdapter;
     private List<Image> mImages;
+
+    private int mHeightToolbar;
+
+    private int mCountMarkedDeleted;
 
     public GalleryFragment() {
 
@@ -40,6 +54,13 @@ public class GalleryFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
+        //calculate size toolbar
+        TypedValue tv = new TypedValue();
+        if (getActivity().getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+        {
+            mHeightToolbar = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+        }
+        //init toolbar
         mToolbarBottom = view.findViewById(R.id.toolbar_gallery);
         mToolbarBottom.setTitleTextColor(Color.DKGRAY);
         mToolbarBottom.inflateMenu(R.menu.fragment_gallery);
@@ -48,6 +69,7 @@ public class GalleryFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.delete_image_button:{
+                        hideToolbar();
                         return true;
                     }
                     default:{
@@ -64,21 +86,33 @@ public class GalleryFragment extends Fragment {
         mAdapter = new GalleryAdapter(mImages);
         mRecyclerViewImages.setAdapter(mAdapter);
 
+        hideToolbar();
+
         return view;
     }
 
     private void showToolbar(){
-
+        mRecyclerViewImages.setPadding(0, 0, 0, mHeightToolbar);
+        mToolbarBottom.setVisibility(View.VISIBLE);
+        updateTitleToolbar(mCountMarkedDeleted);
     }
 
-    private void hideTiilbar(){
-
+    private void hideToolbar(){
+        mMode = SELECT;
+        mRecyclerViewImages.setPadding(0,0,0,0);
+        mToolbarBottom.setVisibility(View.GONE);
+        for (Image image : mImages){
+            image.setChecked(false);
+        }
+        mAdapter.notifyDataSetChanged();
     }
 
     private void updateTitleToolbar(int count){
         String title = getActivity().getResources().getString(R.string.title_bottom_toolbar_gallery);
         mToolbarBottom.setTitle(String.format(title, count));
     }
+
+
 
     private class GalleryHolder extends RecyclerView.ViewHolder{
         private TextView mNameView;
@@ -107,6 +141,8 @@ public class GalleryFragment extends Fragment {
             }else {
                 mCardView.setCardBackgroundColor(Color.WHITE);
             }
+            itemView.setOnClickListener(mOnClickListener);
+            itemView.setOnLongClickListener(mOnLongClickListener);
         }
 
         void setOnClickListener(View.OnClickListener onClickListener) {
@@ -133,8 +169,45 @@ public class GalleryFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull GalleryHolder holder, int position) {
-            Image image = mImages.get(position);
+        public void onBindViewHolder(@NonNull GalleryHolder holder, final int position) {
+            final Image image = mImages.get(position);
+            holder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    switch (mMode){
+                        case SELECT:{
+                            Intent data = new Intent();
+                            data.putExtra(EXTRA_IMAGE_ID, image.getId());
+                            getActivity().setResult(Activity.RESULT_OK, data);
+                            getActivity().finish();
+                            break;
+                        }
+                        case DELETE:{
+                            if (image.isChecked()){
+                                mCountMarkedDeleted--;
+                                image.setChecked(false);
+                            }else {
+                                mCountMarkedDeleted++;
+                                image.setChecked(true);
+                            }
+                            break;
+                        }
+                    }
+                    updateTitleToolbar(mCountMarkedDeleted);
+                    notifyItemChanged(position);
+                }
+            });
+            holder.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    mMode = DELETE;
+                    mCountMarkedDeleted = 1;
+                    image.setChecked(true);
+                    notifyItemChanged(position);
+                    showToolbar();
+                    return true;
+                }
+            });
             holder.bind(image);
         }
 
@@ -142,5 +215,9 @@ public class GalleryFragment extends Fragment {
         public int getItemCount() {
             return mImages.size();
         }
+    }
+
+    public static long getImageID(Intent data){
+        return data.getLongExtra(EXTRA_IMAGE_ID, 0);
     }
 }

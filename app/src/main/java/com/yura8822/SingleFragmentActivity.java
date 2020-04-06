@@ -1,37 +1,30 @@
 package com.yura8822;
 
-import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.yura8822.bluetooth.BluetoothFragment;
-import com.yura8822.device_search.DeviceListActivity;
-import com.yura8822.gallery_new.GalleryActivity;
-import com.yura8822.main.SaveImageDialog;
+import com.yura8822.main.DrawingActivity;
 import com.yura8822.main.DrawingFragment;
 
 public abstract class SingleFragmentActivity extends AppCompatActivity implements BluetoothFragment.OnBluetoothConnected,
         DrawingFragment.OnSendListener {
     private static final String TAG = "SingleFragmentActivity";
     private static final String BLUETOOTH_FRAGMENT_TAG = "com.yura8822.SingleFragmentActivity.BluetoothFragment";
-    private static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 0;
+
 
 
     private BluetoothFragment mBluetoothFragment;
@@ -106,38 +99,13 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
             bluetoothConnecned.setVisible(false);
         }
 
-        if (this.getClass() == DeviceListActivity.class || this.getClass() == GalleryActivity.class){
+        if (this.getClass() != DrawingActivity.class){
             menu.findItem(R.id.device_list).setVisible(false);
             menu.findItem(R.id.save_img_dialog).setVisible(false);
             menu.findItem(R.id.gallery).setVisible(false);
         }
 
         return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.device_list:{
-                checkPermissionsAndStartDeviceList();
-                return true;
-            }
-
-            case R.id.save_img_dialog:{
-                SaveImageDialog saveImageDialog = new SaveImageDialog();
-                saveImageDialog.setTargetFragment(getSupportFragmentManager().
-                        findFragmentById(R.id.fragment_container), DrawingFragment.REQUEST_SAVE_IMG);
-                saveImageDialog.show(getSupportFragmentManager(), SaveImageDialog.DIALOG_SAVE_IMAGE);
-                return true;
-            }
-
-            case R.id.gallery:{
-                startActivity(new Intent(this, GalleryActivity.class));
-                return true;
-            }
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -181,36 +149,6 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
         }
     };
 
-    private void checkPermissionsAndStartDeviceList(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
-        }else {
-            startDeviceList();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case MY_PERMISSIONS_REQUEST_ACCESS_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[1] == PackageManager.PERMISSION_GRANTED){
-                    startDeviceList();
-                }
-                break;
-            }
-        }
-    }
-
-    private void startDeviceList(){
-        startActivity(new Intent(this, DeviceListActivity.class));
-    }
 
     protected void stopBluetooth(){
         mBluetoothFragment.stop();
