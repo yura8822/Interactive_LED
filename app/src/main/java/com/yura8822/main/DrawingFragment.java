@@ -21,7 +21,7 @@ import androidx.fragment.app.Fragment;
 import com.yura8822.R;
 import com.yura8822.database.Image;
 import com.yura8822.database.ImageLab;
-import com.yura8822.gallery_new.GalleryFragment;
+import com.yura8822.gallery_image.GalleryFragment;
 import com.yura8822.utils.ImageUtils;
 
 import java.util.Date;

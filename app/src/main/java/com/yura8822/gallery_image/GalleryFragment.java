@@ -1,4 +1,4 @@
-package com.yura8822.gallery_new;
+package com.yura8822.gallery_image;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,6 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.yura8822.R;
@@ -45,8 +46,27 @@ public class GalleryFragment extends Fragment {
 
     private int mCountMarkedDeleted;
 
-    public GalleryFragment() {
+    private ItemTouchHelper mItemTouchHelper;
 
+    private ItemTouchHelper.SimpleCallback mSimpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0,
+            ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+            int position = viewHolder.getAdapterPosition();
+            ImageLab.get(getContext().getApplicationContext()).deleteImage(mImages.get(position).getId());
+            mImages.remove(position);
+            mAdapter.notifyItemRemoved(position);
+            mAdapter.notifyItemRangeChanged(position, mImages.size());
+        }
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            return true;
+        }
+    };
+
+    public GalleryFragment() {
     }
 
     @Override
@@ -69,6 +89,15 @@ public class GalleryFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.delete_image_button:{
+                        ImageLab.get(getContext().getApplicationContext()).deleteImages(mImages);
+                        for (int i = 0; i < mImages.size(); i++){
+                            if (mImages.get(i).isChecked()){
+                                mImages.remove(i);
+                                mAdapter.notifyItemRemoved(i);
+                                i--;
+                            }
+                        }
+                        mAdapter.notifyItemRangeChanged(0, mImages.size());
                         hideToolbar();
                         return true;
                     }
@@ -86,6 +115,9 @@ public class GalleryFragment extends Fragment {
         mAdapter = new GalleryAdapter(mImages);
         mRecyclerViewImages.setAdapter(mAdapter);
 
+        mItemTouchHelper = new ItemTouchHelper(mSimpleItemTouchCallback);
+        mItemTouchHelper.attachToRecyclerView(mRecyclerViewImages);
+
         hideToolbar();
 
         return view;
@@ -99,12 +131,12 @@ public class GalleryFragment extends Fragment {
 
     private void hideToolbar(){
         mMode = SELECT;
+        mItemTouchHelper.attachToRecyclerView(mRecyclerViewImages);
         mRecyclerViewImages.setPadding(0,0,0,0);
         mToolbarBottom.setVisibility(View.GONE);
         for (Image image : mImages){
             image.setChecked(false);
         }
-        mAdapter.notifyDataSetChanged();
     }
 
     private void updateTitleToolbar(int count){
@@ -190,17 +222,18 @@ public class GalleryFragment extends Fragment {
                                 mCountMarkedDeleted++;
                                 image.setChecked(true);
                             }
+                            updateTitleToolbar(mCountMarkedDeleted);
+                            notifyItemChanged(position);
                             break;
                         }
                     }
-                    updateTitleToolbar(mCountMarkedDeleted);
-                    notifyItemChanged(position);
                 }
             });
             holder.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     mMode = DELETE;
+                    mItemTouchHelper.attachToRecyclerView(null);
                     mCountMarkedDeleted = 1;
                     image.setChecked(true);
                     notifyItemChanged(position);
@@ -219,5 +252,20 @@ public class GalleryFragment extends Fragment {
 
     public static long getImageID(Intent data){
         return data.getLongExtra(EXTRA_IMAGE_ID, 0);
+    }
+
+    public boolean isDeleteModeEnabled(){
+        if (mMode == DELETE){
+            for (int i = 0; i < mImages.size(); i++){
+                if (mImages.get(i).isChecked()){
+                    mImages.get(i).setChecked(false);
+                    mAdapter.notifyItemChanged(i);
+                }
+            }
+            hideToolbar();
+            return true;
+        }else {
+            return false;
+        }
     }
 }

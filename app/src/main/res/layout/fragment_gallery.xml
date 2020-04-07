@@ -6,7 +6,7 @@
     android:id="@+id/galleryLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".gallery_new.GalleryFragment">
+    tools:context=".gallery_image.GalleryFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_gallery"

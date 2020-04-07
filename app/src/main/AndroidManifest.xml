@@ -32,7 +32,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".gallery_new.GalleryActivity"
+            android:name=".gallery_image.GalleryActivity"
             android:screenOrientation="portrait"/>
 
     </application>

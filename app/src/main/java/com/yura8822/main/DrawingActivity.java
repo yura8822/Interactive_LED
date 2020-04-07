@@ -15,7 +15,7 @@ import com.yura8822.R;
 import com.yura8822.SingleFragmentActivity;
 import com.yura8822.database.ImageLab;
 import com.yura8822.device_search.DeviceListActivity;
-import com.yura8822.gallery_new.GalleryActivity;
+import com.yura8822.gallery_image.GalleryActivity;
 
 public class DrawingActivity extends SingleFragmentActivity {
     private static final String TAG = "DrawingActivity";

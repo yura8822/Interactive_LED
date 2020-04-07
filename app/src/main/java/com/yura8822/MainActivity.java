@@ -23,8 +23,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.tabs.TabLayout;
 import com.yura8822.bluetooth.BluetoothFragment;
 import com.yura8822.database.DBHelper;
-import com.yura8822.database.Image;
-import com.yura8822.gallery.GalleryImageActivity;
 import com.yura8822.main.ColorPickerDialog;
 import com.yura8822.main.SaveImageDialog;
 
@@ -183,8 +181,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.gallery_image:
-                Intent intent = GalleryImageActivity.newIntent(MainActivity.this);
-                startActivityForResult(intent, REQUEST_ID_IMAGE);
+//                Intent intent = GalleryImageActivity.newIntent(MainActivity.this);
+//                startActivityForResult(intent, REQUEST_ID_IMAGE);
                 return true;
 
             case R.id.save_image_menu:
@@ -228,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
             if (data == null) {
                 return;
             }
-            Image image = mDBHelper.findById(GalleryImageActivity.getImageID(data));
+//            Image image = mDBHelper.findById(GalleryImageActivity.getImageID(data));
 
             //parse string image in int[][] immage
 //            int[][] colorList = ImageUtils.stringArrayToIntArray(getResources().getInteger(R.integer.quantity_rows),

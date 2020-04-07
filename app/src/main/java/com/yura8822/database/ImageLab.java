@@ -55,6 +55,12 @@ public class ImageLab {
         mDatabase.insert(ImageGalleryTable.TABLE_NAME, null, contentValues);
     }
 
+    public void deleteImage(long id){
+        mDatabase.delete(ImageGalleryTable.TABLE_NAME,
+                ImageGalleryTable.Colls.ID + " = ?",
+                new String[]{String.valueOf(id)});
+    }
+
     public void deleteImages(List<Image> images){
         for (Image image : images){
             if (image.isChecked()){
