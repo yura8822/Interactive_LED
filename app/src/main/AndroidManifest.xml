@@ -16,7 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"> <!-- temporary measure -->
-        <activity android:name=".SingleFragmentActivity"></activity>
 
         <activity
             android:name=".main.DrawingActivity"
