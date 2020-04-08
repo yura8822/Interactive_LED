@@ -94,26 +94,29 @@ public class DrawingFragment extends Fragment {
         if (resultCode != Activity.RESULT_OK || data == null){
             return;
         }
-        if (requestCode == REQUEST_COLOR){
-            int color = ColorPickerDialog.getColor(data);
-            mPaletteLastColors.addColor(color);
-            updateSelectedColor(color);
-        }
-
-        if (requestCode == REQUEST_SAVE_IMG){
-            String nameImg = SaveImageDialog.getNameImg(data);
-            Image image = new Image();
-            image.setName(nameImg);
-            image.setDate(new Date().getTime());
-            image.setImage(ImageUtils.intArrayToByteArray(mPixelGird.getColorList()));
-            ImageLab.get(getContext().getApplicationContext()).insertImage(image);
-        }
-
-        if (requestCode == REQUEST_LOAD_IMAGE){
-            long id = GalleryFragment.getImageID(data);
-            Image image = ImageLab.get(getContext().getApplicationContext()).getImageById(id);
-            int[][] colorList = ImageUtils.byteArrayToIntArray(getResources(), image.getImage());
-            mPixelGird.setColorList(colorList);
+        switch (requestCode){
+            case REQUEST_COLOR:{
+                int color = ColorPickerDialog.getColor(data);
+                mPaletteLastColors.addColor(color);
+                updateSelectedColor(color);
+                break;
+            }
+            case REQUEST_SAVE_IMG:{
+                String nameImg = SaveImageDialog.getNameImg(data);
+                Image image = new Image();
+                image.setName(nameImg);
+                image.setDate(new Date().getTime());
+                image.setImage(ImageUtils.intArrayToByteArray(mPixelGird.getColorList()));
+                ImageLab.get(getContext().getApplicationContext()).insertImage(image);
+                break;
+            }
+            case REQUEST_LOAD_IMAGE:{
+                long id = GalleryFragment.getImageID(data);
+                Image image = ImageLab.get(getContext().getApplicationContext()).getImageById(id);
+                int[][] colorList = ImageUtils.byteArrayToIntArray(getResources(), image.getImage());
+                mPixelGird.setColorList(colorList);
+            break;
+            }
         }
     }
 

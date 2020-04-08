@@ -1,35 +1,16 @@
 <resources>
     <string name="app_name">Interactive_LED</string>
 
-    <!--  DeviceListActivity -->
-
-    <string name="select_device">выберите устройства для подключения</string>
-
-
     <!--  BluetoothFragment -->
-    <string name="send">Send</string>
-    <string name="not_connected">You are not connected to a device</string>
-    <string name="bt_not_enabled_leaving">Bluetooth was not enabled.</string>
-    <string name="title_connecting">connecting...</string>
-    <string name="title_connected_to">Device connected</string>
-    <string name="title_not_connected">not connected</string>
+    <string name="bt_not_enabled_leaving">Bluetooth не был включен</string>
+    <string name="connection_failed">Не удалось подключиться</string>
+    <string name="connection_lost">Соединение прервано</string>
 
-    <!--    ToolBar state-->
-    <!--    <string name="bluetooth_on">Bluetooth включен</string>-->
-    <!--    <string name="bluetooth_connected">Соединен</string>-->
-    <string name="bluetooth_disabled">Bluetooth выключен</string>
-
-    <string name="gallery_image">Галерея</string>
-
-
-    <!--    list_item_image.xml-->
-    <string name="select_card">выбрать</string>
-
-    <!--    +++++++++++++++++++++ -->
     <!--    SingleFragmentActivity-->
     <string name="sate_bluetooth_off">Включите Bluetooth</string>
     <string name="state_non_connected_device">Подключите устройство</string>
-    <string name="state_connected_device">Устройство подключено</string>
+    <string name="state_connected_device">Подключено: %1$s</string>
+    <string name="state_connecting_device">Подключаю...</string>
 
     <!--    menu: activity_single_fragment-->
     <string name="bluetooth_on">Bluetooth включен</string>

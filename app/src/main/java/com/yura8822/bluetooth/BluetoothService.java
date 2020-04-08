@@ -21,11 +21,13 @@ public class BluetoothService {
     final static int MESSAGE_READ = 2;
     final static int MESSAGE_WRITE = 3;
     final static int MESSAGE_DEVICE_NAME = 4;
-    final static int MESSAGE_TOAST = 5;
+    final static int MESSAGE_CONNECTION_FAILED = 5;
+    final static int MESSAGE_CONNECTION_LOST = 6;
 
     // Key names
     final static String DEVICE_NAME = "device_name";
-    final static String TOAST = "toast";
+    final static String CONNECTION_FAILED = "connection_failed";
+    final static String CONNECTION_LOST = "connection_lost";
 
     private static final String TAG = "BluetoothService";
 
@@ -181,9 +183,9 @@ public class BluetoothService {
     // Send a failure message back to the Activity
     private void connectionFailed() {
         // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(MESSAGE_TOAST);
+        Message msg = mHandler.obtainMessage(MESSAGE_CONNECTION_FAILED);
         Bundle bundle = new Bundle();
-        bundle.putString(TOAST, "Unable to connect device");
+        bundle.putString(CONNECTION_FAILED, "Unable to connect device");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 
@@ -198,9 +200,9 @@ public class BluetoothService {
     //Indicate that the connection was lost and notify the UI Activity
     private void connectionLost() {
         // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(MESSAGE_TOAST);
+        Message msg = mHandler.obtainMessage(MESSAGE_CONNECTION_LOST);
         Bundle bundle = new Bundle();
-        bundle.putString(TOAST, "Device connection was lost");
+        bundle.putString(CONNECTION_LOST, "Device connection was lost");
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 

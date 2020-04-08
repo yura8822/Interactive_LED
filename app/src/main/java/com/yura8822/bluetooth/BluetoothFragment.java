@@ -21,15 +21,19 @@ import com.yura8822.R;
 
 public class BluetoothFragment extends Fragment {
     private static final String TAG = "BluetoothFragment";
+    //connection state
+    public static final int NONE = 0;
+    public static final int CONNECTING = 1;
+    public static final int CONNECTED = 2;
 
     public interface OnBluetoothConnected{
         void onStateConnected();
+        void getNameConnectedDevice(String name);
     }
     private OnBluetoothConnected mOnBluetoothConnected;
 
     // Intent request codes
-    private static final int REQUEST_CONNECT_DEVICE = 1;
-    private static final int REQUEST_ENABLE_BT = 2;
+    private static final int REQUEST_ENABLE_BT = 1;
 
     //Local Bluetooth adapter
     private BluetoothAdapter mBluetoothAdapter = null;
@@ -105,48 +109,23 @@ public class BluetoothFragment extends Fragment {
     }
 
     private void setupBT() {
-        Log.d(TAG, "setupChat()");
+        Log.d(TAG, "setupBT()");
         FragmentActivity activity = getActivity();
         if (activity == null) {
             return;
         }
-        // Initialize the BluetoothChatService to perform bluetooth connections
+        // Initialize the BluetoothService to perform bluetooth connections
         mBTService = new BluetoothService(activity, mHandler);
     }
 
-    //Sends a message
-    public void sendMessage(int[][] colorList) {
-        // Check that we're actually connected before trying anything
-        if (mBTService == null ||
-                mBTService.getState() != BluetoothService.STATE_CONNECTED) {
-            Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Check that there's actually something to send
-        byte[] resultArray = new byte[677];
-        int index = 0;
-        resultArray[index] = (byte) 111;
-
-        for (int i = 0; i < colorList.length; i++) {
-            for (int j = 0; j < colorList[i].length; j++) {
-                resultArray[++index] = (byte) Color.red(colorList[i][j]);
-                resultArray[++index] = (byte) Color.green(colorList[i][j]);
-                resultArray[++index] = (byte) Color.blue(colorList[i][j]);
-            }
-        }
-        resultArray[++index] = (byte) 112;
-        mBTService.write(resultArray);
-    }
-
-    //The Handler that gets information back from the BluetoothChatService
+    //The Handler that gets information back from the BluetoothService
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             FragmentActivity activity = getActivity();
             switch (msg.what) {
-                case BluetoothService.MESSAGE_STATE_CHANGE:
+                case BluetoothService.MESSAGE_STATE_CHANGE: {
                     if (activity != null) { //temp !!!
                         switch (msg.arg1) {
 
@@ -167,34 +146,41 @@ public class BluetoothFragment extends Fragment {
                         }
                     }
                     break;
-
-                case BluetoothService.MESSAGE_WRITE:
+                }
+                case BluetoothService.MESSAGE_WRITE: {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
                     break;
-
-                case BluetoothService.MESSAGE_READ:
+                }
+                case BluetoothService.MESSAGE_READ: {
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     break;
-
-                case BluetoothService.MESSAGE_DEVICE_NAME:
+                }
+                case BluetoothService.MESSAGE_DEVICE_NAME: {
                     // save the connected device's name
                     String connectedDeviceName = msg.getData().getString(BluetoothService.DEVICE_NAME);
                     if (null != activity) {
-                        Toast.makeText(activity, "Connected to "
-                                + connectedDeviceName, Toast.LENGTH_SHORT).show();
+                        mOnBluetoothConnected.getNameConnectedDevice(connectedDeviceName);
                     }
                     break;
-
-                case BluetoothService.MESSAGE_TOAST:
+                }
+                case BluetoothService.MESSAGE_CONNECTION_FAILED: {
                     if (null != activity) {
-                        Toast.makeText(activity, msg.getData().getString(BluetoothService.TOAST),
-                                Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, msg.getData().getString(BluetoothService.CONNECTION_FAILED));
+                        Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_LONG).show();
                     }
                     break;
+                }
+                case BluetoothService.MESSAGE_CONNECTION_LOST:{
+                    if (null != activity){
+                        Log.d(TAG, msg.getData().getString(BluetoothService.CONNECTION_LOST));
+                        Toast.makeText(getActivity(), R.string.connection_lost, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                }
             }
         }
     };
@@ -204,7 +190,7 @@ public class BluetoothFragment extends Fragment {
             case REQUEST_ENABLE_BT: {
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
-                    // Bluetooth is now enabled, so set up a chat session
+                    // Bluetooth is now enabled, so set up a BT session
                     setupBT();
                 } else {
                     // User did not enable Bluetooth or an error occurred
@@ -240,15 +226,45 @@ public class BluetoothFragment extends Fragment {
         }
     }
 
-    public boolean getStateConnected() {
+    public int getStateConnected() {
         if (mBTService != null){
-            if (mBTService.getState() == BluetoothService.STATE_CONNECTED) {
-                return true;
+            switch (mBTService.getState()){
+                case BluetoothService.STATE_NONE:{
+                    return NONE;
+                }
+                case BluetoothService.STATE_CONNECTING:{
+                    return CONNECTING;
+                }
+                case BluetoothService.STATE_CONNECTED:{
+                    return CONNECTED;
+                }
             }
-            return false;
-        }else{
-            return false;
         }
+        return NONE;
+    }
+
+    //Sends a message
+    public void sendMessage(int[][] colorList) {
+        // Check that we're actually connected before trying anything
+        if (mBTService == null ||
+                mBTService.getState() != BluetoothService.STATE_CONNECTED) {
+            return;
+        }
+
+        // Check that there's actually something to send
+        byte[] resultArray = new byte[677];
+        int index = 0;
+        resultArray[index] = (byte) 111;
+
+        for (int i = 0; i < colorList.length; i++) {
+            for (int j = 0; j < colorList[i].length; j++) {
+                resultArray[++index] = (byte) Color.red(colorList[i][j]);
+                resultArray[++index] = (byte) Color.green(colorList[i][j]);
+                resultArray[++index] = (byte) Color.blue(colorList[i][j]);
+            }
+        }
+        resultArray[++index] = (byte) 112;
+        mBTService.write(resultArray);
     }
 }
 

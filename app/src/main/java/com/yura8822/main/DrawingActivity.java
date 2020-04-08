@@ -1,11 +1,14 @@
 package com.yura8822.main;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -20,6 +23,14 @@ import com.yura8822.gallery_image.GalleryActivity;
 public class DrawingActivity extends SingleFragmentActivity {
     private static final String TAG = "DrawingActivity";
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 0;
+    private static final int REQUEST_DEVICE_ADRESS = 1;
+    private FragmentManager mFragmentManager;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mFragmentManager = getSupportFragmentManager();
+    }
 
     @Override
     protected Fragment createFragment() {
@@ -50,14 +61,25 @@ public class DrawingActivity extends SingleFragmentActivity {
             }
 
             case R.id.gallery:{
-                FragmentManager fm = getSupportFragmentManager();
-                Fragment fragment = fm.findFragmentById(R.id.fragment_container);
+                Fragment fragment = mFragmentManager.findFragmentById(R.id.fragment_container);
                 Intent intent = new Intent(this, GalleryActivity.class);
                 fragment.startActivityForResult(intent, DrawingFragment.REQUEST_LOAD_IMAGE);
                 return true;
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != Activity.RESULT_OK && data == null) {
+            return;
+        }
+
+        if (requestCode == REQUEST_DEVICE_ADRESS){
+            connectDevice(data);
+        }
     }
 
     private void checkPermissionsAndStartDeviceList(){
@@ -70,7 +92,7 @@ public class DrawingActivity extends SingleFragmentActivity {
                             Manifest.permission.ACCESS_COARSE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
         }else {
-            startActivity(new Intent(this, DeviceListActivity.class));
+            startActivityForResult(new Intent(this, DeviceListActivity.class), REQUEST_DEVICE_ADRESS);
         }
     }
 
@@ -80,7 +102,7 @@ public class DrawingActivity extends SingleFragmentActivity {
             case MY_PERMISSIONS_REQUEST_ACCESS_LOCATION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                         grantResults[1] == PackageManager.PERMISSION_GRANTED){
-                    startActivity(new Intent(this, DeviceListActivity.class));
+                    startActivityForResult(new Intent(this, DeviceListActivity.class), REQUEST_DEVICE_ADRESS);
                 }
                 break;
             }

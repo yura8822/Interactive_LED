@@ -30,7 +30,9 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
     private BluetoothFragment mBluetoothFragment;
 
     private boolean mBluetoothEnabled;
-    private boolean mBluetoothConnected;
+    private int mBluetoothConnected;
+
+    private String mDeviceName;
 
     protected abstract Fragment createFragment();
 
@@ -93,7 +95,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
             bluetoothOff.setVisible(true);
         }
 
-        if (mBluetoothConnected){
+        if (mBluetoothConnected == BluetoothFragment.CONNECTED){
             bluetoothConnecned.setVisible(true);
         }else {
             bluetoothConnecned.setVisible(false);
@@ -108,9 +110,15 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
         return true;
     }
 
+    //interface methods OnBluetoothConnected
     @Override
     public void onStateConnected() {
         updateMenu();
+    }
+
+    @Override
+    public void getNameConnectedDevice(String name) {
+        mDeviceName = name;
     }
 
     private void updateMenu(){
@@ -119,10 +127,22 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
         mBluetoothConnected = mBluetoothFragment.getStateConnected();
 
         if (actionBar != null){
-            if (mBluetoothConnected && mBluetoothEnabled){
-                actionBar.setSubtitle(R.string.state_connected_device);
-            }else if (!mBluetoothConnected && mBluetoothEnabled){
-                actionBar.setSubtitle(R.string.state_non_connected_device);
+            if (mBluetoothEnabled){
+                switch (mBluetoothConnected){
+                    case BluetoothFragment.CONNECTED:{
+                        String title = getResources().getString(R.string.state_connected_device);
+                        actionBar.setSubtitle(String.format(title, mDeviceName));
+                        break;
+                    }
+                    case BluetoothFragment.CONNECTING:{
+                        actionBar.setSubtitle(R.string.state_connecting_device);
+                        break;
+                    }
+                    case BluetoothFragment.NONE:{
+                        actionBar.setSubtitle(R.string.state_non_connected_device);
+                        break;
+                    }
+                }
             }else {
                 actionBar.setSubtitle(R.string.sate_bluetooth_off);
             }
