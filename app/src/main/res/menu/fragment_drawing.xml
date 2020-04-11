@@ -2,23 +2,28 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/undo"
+        android:title="@string/undo"
+        android:icon="@drawable/ic_action_undo"
+        android:orderInCategory="1"
+        app:showAsAction="always"/>
+    <item
         android:id="@+id/select_color"
         android:title="@string/select_color"
         android:icon="@drawable/ic_select_color"
-        android:orderInCategory="1"
-        app:showAsAction="ifRoom"
-        />
+        android:orderInCategory="2"
+        app:showAsAction="always" />
     <item
         android:id="@+id/eraser"
         android:title="@string/eraser"
         android:icon="@drawable/ic_eraser"
-        android:orderInCategory="2"
-        app:showAsAction="ifRoom"/>
+        android:orderInCategory="3"
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/erase_drawing"
         android:title="@string/erase_drawing"
         android:icon="@drawable/ic_erase_drawing"
-        android:orderInCategory="3"
-        app:showAsAction="ifRoom"/>
+        android:orderInCategory="4"
+        app:showAsAction="always"/>
 </menu>

@@ -150,6 +150,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
         SingleFragmentActivity.this.invalidateOptionsMenu();
     }
 
+    //interface method OnSendListener
     @Override
     public void sendToBluetooth(int[][] colorList) {
         mBluetoothFragment.sendMessage(colorList);

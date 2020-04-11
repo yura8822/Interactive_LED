@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,13 +25,15 @@ import com.yura8822.database.ImageLab;
 import com.yura8822.gallery_image.GalleryFragment;
 import com.yura8822.utils.ImageUtils;
 
+import java.util.ArrayDeque;
 import java.util.Date;
 
 public class DrawingFragment extends Fragment {
     private static final String TAG = "DrawingFragment";
     private final static int REQUEST_COLOR = 0;
-    public final static int REQUEST_SAVE_IMG = 1;
-    public final static int REQUEST_LOAD_IMAGE = 2;
+    final static int REQUEST_SAVE_IMG = 1;
+    final static int REQUEST_LOAD_IMAGE = 2;
+    private static final int BACK_STACK_SIZE = 55;
 
     public interface OnSendListener {
         void sendToBluetooth(int[][] colorList);
@@ -42,6 +45,10 @@ public class DrawingFragment extends Fragment {
     private ColorPickerDialog mColorPicker;
     private PixelGird mPixelGird;
     private PaletteLastColors mPaletteLastColors;
+
+    private ArrayDeque<int[][]> mStackColorLists = new ArrayDeque<>();
+    boolean mRecordStackFlag;
+    private MenuItem mUndoMenuItem;
 
     public DrawingFragment() {
 
@@ -67,6 +74,8 @@ public class DrawingFragment extends Fragment {
         ActionMenuView actionMenu = view.findViewById(R.id.drawing_tools_menu);
         MenuInflater menuInflater = getActivity().getMenuInflater();
         menuInflater.inflate(R.menu.fragment_drawing, actionMenu.getMenu());
+        Menu menu = actionMenu.getMenu();
+        mUndoMenuItem = menu.findItem(R.id.undo);
         actionMenu.setOnMenuItemClickListener(mItemClickListener);
 
         mPixelGird = view.findViewById(R.id.pixel_gird);
@@ -74,9 +83,15 @@ public class DrawingFragment extends Fragment {
         mPixelGird.setListenerPixelGird(new PixelGird.ListenerPixelGird() {
             @Override
             public void sendArrayGird(int[][] colorList) {
+                if (!mRecordStackFlag){
+                    addToStack(colorList);
+                }
+                mRecordStackFlag = false;
                 mOnSendListener.sendToBluetooth(colorList);
             }
         });
+        mPixelGird.resetColorList();
+
         mPaletteLastColors = view.findViewById(R.id.palette_last_colors);
         //listener registration for palette colors
         mPaletteLastColors.setListenerPaletteLastColors(new PaletteLastColors.ListenerPaletteLastColors() {
@@ -114,8 +129,11 @@ public class DrawingFragment extends Fragment {
                 long id = GalleryFragment.getImageID(data);
                 Image image = ImageLab.get(getContext().getApplicationContext()).getImageById(id);
                 int[][] colorList = ImageUtils.byteArrayToIntArray(getResources(), image.getImage());
+                //clear back stack
+                mStackColorLists.clear();
+                //drawing loaded image
                 mPixelGird.setColorList(colorList);
-            break;
+                break;
             }
         }
     }
@@ -129,6 +147,12 @@ public class DrawingFragment extends Fragment {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()){
+                case R.id.undo:{
+                    mRecordStackFlag = true;
+                    int[][] colorList = getOutOfStack();
+                    mPixelGird.setColorList(colorList);
+                    return true;
+                }
                 case R.id.select_color:{
                     mColorPicker = new ColorPickerDialog();
                     mColorPicker.setTargetFragment(DrawingFragment.this, REQUEST_COLOR);
@@ -149,4 +173,43 @@ public class DrawingFragment extends Fragment {
             }
         }
     };
+
+    private void addToStack(int[][] colorList) {
+        int[][] savedColorList = new int[colorList.length][colorList[0].length];
+        for (int i = 0; i < colorList.length; i++){
+            savedColorList[i] = colorList[i].clone();
+        }
+        mStackColorLists.offerFirst(savedColorList);
+        if (mStackColorLists.size() > BACK_STACK_SIZE){
+            mStackColorLists.removeLast();
+        }
+        if (mStackColorLists.size() > 1){
+            setUndoMenuItemEnabled(true);
+        }else {
+            setUndoMenuItemEnabled(false);
+        }
+    }
+
+    private int[][] getOutOfStack(){
+        int size = mStackColorLists.size();
+        if (size > 2){
+            mStackColorLists.pollFirst();
+            return mStackColorLists.peekFirst();
+        }else if (size == 2){
+            mStackColorLists.pollFirst();
+            setUndoMenuItemEnabled(false);
+            return mStackColorLists.peekFirst();
+        }
+        return null;
+    }
+
+    private void setUndoMenuItemEnabled(boolean b){
+       if (b){
+           mUndoMenuItem.setEnabled(true);
+           mUndoMenuItem.getIcon().setAlpha(153);
+       }else {
+           mUndoMenuItem.setEnabled(false);
+           mUndoMenuItem.getIcon().setAlpha(60);
+       }
+    }
 }

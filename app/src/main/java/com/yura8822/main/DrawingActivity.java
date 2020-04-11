@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,6 +43,20 @@ public class DrawingActivity extends SingleFragmentActivity {
         stopBluetooth();
         ImageLab.get(getApplicationContext()).closeDBHelper();
         super.onDestroy();
+    }
+
+    private long mPreviousTime = 0;
+    private Toast mToast;
+    @Override
+    public void onBackPressed() {
+        if (mPreviousTime + 2000 < System.currentTimeMillis()){
+            mPreviousTime = System.currentTimeMillis();
+            mToast = Toast.makeText(this, R.string.exit_app, Toast.LENGTH_SHORT);
+            mToast.show();
+        }else {
+            mToast.cancel();
+            super.onBackPressed();
+        }
     }
 
     @Override

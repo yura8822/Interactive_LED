@@ -34,6 +34,7 @@
     <string name="select_color">Выбрать цвет</string>
     <string name="eraser">Ластик</string>
     <string name="erase_drawing">Очистить</string>
+    <string name="undo">Отменить</string>
 
     <!--    ColorPicker-->
     <string name="select">Выбрать</string>
@@ -48,5 +49,8 @@
 
     <!--    GalleryFragment-->
     <string name="title_bottom_toolbar_gallery">Помечено на удаление: %1$d</string>
+
+<!--    DrawingActivity-->
+    <string name="exit_app">Нажмите ещё раз для выхода</string>
 
 </resources>
