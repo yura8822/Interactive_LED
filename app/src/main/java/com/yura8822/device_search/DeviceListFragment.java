@@ -30,7 +30,7 @@ import java.util.Set;
 
 public class DeviceListFragment extends Fragment {
     private static final String TAG = "DeviceListFragment";
-    private static final String EXTRA_DEVICE_ADDRESS = "com.yura8822.extra_device_list";
+    public static final String EXTRA_DEVICE_ADDRESS = "com.yura8822.extra_device_list";
 
     private RecyclerView mPairedDevicesRecycler;
     private DevicesAdapter mPairedDevicesAdapter;

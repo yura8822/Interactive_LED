@@ -10,21 +10,25 @@ import com.yura8822.database.DBContract.ImageGalleryTable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageLab {
-    private static ImageLab sImageLab;
+import static com.yura8822.database.DBContract.DeviceTable;
+
+public class DataBaseLab {
+    private static DataBaseLab sDataBaseLab;
     private SQLiteDatabase mDatabase;
     private Context mContext;
 
-    private ImageLab(Context context){
+    private static final String DEVICE_KEY = "com.yura8822.device_key";
+
+    private DataBaseLab(Context context){
         mContext = context.getApplicationContext();
         mDatabase = new DBHelper(mContext).getWritableDatabase();
     }
 
-    public static ImageLab get(Context context){
-        if (sImageLab == null){
-            sImageLab = new ImageLab(context);
+    public static DataBaseLab get(Context context){
+        if (sDataBaseLab == null){
+            sDataBaseLab = new DataBaseLab(context);
         }
-        return sImageLab;
+        return sDataBaseLab;
     }
 
     public List<Image> getImages(){
@@ -51,7 +55,7 @@ public class ImageLab {
     }
 
     public void insertImage(Image image){
-        ContentValues contentValues = getContentValues(image);
+        ContentValues contentValues = getContentValuesImage(image);
         mDatabase.insert(ImageGalleryTable.TABLE_NAME, null, contentValues);
     }
 
@@ -89,7 +93,7 @@ public class ImageLab {
         return new ImageCursorWrapper(cursor);
     }
 
-    private ContentValues getContentValues(Image image){
+    private ContentValues getContentValuesImage(Image image){
         ContentValues contentValues = new ContentValues();
         contentValues.put(ImageGalleryTable.Colls.NAME, image.getName());
         contentValues.put(ImageGalleryTable.Colls.DATE, String.valueOf(image.getDate()));
@@ -97,13 +101,40 @@ public class ImageLab {
         return contentValues;
     }
 
-    public SQLiteDatabase getDatabase() {
-        return mDatabase;
+    public void insertDevice(String mac) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DeviceTable.Colls.KEY, DEVICE_KEY);
+        contentValues.put(DeviceTable.Colls.MAC, mac);
+        mDatabase.insert(DeviceTable.TABLE_NAME, null, contentValues);
     }
 
-    public void closeDBHelper(){
-        if (mDatabase == null){
-            mDatabase.close();
+    public void deleteDevice(){
+        mDatabase.delete(DeviceTable.TABLE_NAME,
+                DeviceTable.Colls.KEY + " = ?",
+                new String[]{DEVICE_KEY});
+    }
+
+    public List<String> getDevice(){
+        List<String> list = new ArrayList<>();
+        String[] projection = {DeviceTable.Colls.MAC};
+        try (Cursor cursor = mDatabase.query(
+                DeviceTable.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null)) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                list.add(cursor.getString(cursor.getColumnIndex(DeviceTable.Colls.MAC)));
+                cursor.moveToNext();
+            }
         }
+        return list;
+    }
+
+    public SQLiteDatabase getDatabase() {
+        return mDatabase;
     }
 }

@@ -20,8 +20,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.yura8822.R;
+import com.yura8822.database.DataBaseLab;
 import com.yura8822.database.Image;
-import com.yura8822.database.ImageLab;
 import com.yura8822.gallery_image.GalleryFragment;
 import com.yura8822.utils.ImageUtils;
 
@@ -47,7 +47,7 @@ public class DrawingFragment extends Fragment {
     private PaletteLastColors mPaletteLastColors;
 
     private ArrayDeque<int[][]> mStackColorLists = new ArrayDeque<>();
-    boolean mRecordStackFlag;
+    private boolean mRecordStackFlag;
     private MenuItem mUndoMenuItem;
 
     public DrawingFragment() {
@@ -122,12 +122,12 @@ public class DrawingFragment extends Fragment {
                 image.setName(nameImg);
                 image.setDate(new Date().getTime());
                 image.setImage(ImageUtils.intArrayToByteArray(mPixelGird.getColorList()));
-                ImageLab.get(getContext().getApplicationContext()).insertImage(image);
+                DataBaseLab.get(getContext().getApplicationContext()).insertImage(image);
                 break;
             }
             case REQUEST_LOAD_IMAGE:{
                 long id = GalleryFragment.getImageID(data);
-                Image image = ImageLab.get(getContext().getApplicationContext()).getImageById(id);
+                Image image = DataBaseLab.get(getContext().getApplicationContext()).getImageById(id);
                 int[][] colorList = ImageUtils.byteArrayToIntArray(getResources(), image.getImage());
                 //clear back stack
                 mStackColorLists.clear();
@@ -204,12 +204,12 @@ public class DrawingFragment extends Fragment {
     }
 
     private void setUndoMenuItemEnabled(boolean b){
-       if (b){
-           mUndoMenuItem.setEnabled(true);
-           mUndoMenuItem.getIcon().setAlpha(153);
-       }else {
-           mUndoMenuItem.setEnabled(false);
-           mUndoMenuItem.getIcon().setAlpha(60);
-       }
+        if (b){
+            mUndoMenuItem.setEnabled(true);
+            mUndoMenuItem.getIcon().setAlpha(153);
+        }else {
+            mUndoMenuItem.setEnabled(false);
+            mUndoMenuItem.getIcon().setAlpha(60);
+        }
     }
 }

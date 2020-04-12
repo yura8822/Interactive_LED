@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.yura8822.bluetooth.BluetoothFragment;
+import com.yura8822.database.DataBaseLab;
 import com.yura8822.main.DrawingActivity;
 import com.yura8822.main.DrawingFragment;
 
@@ -132,6 +133,10 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
                     case BluetoothFragment.CONNECTED:{
                         String title = getResources().getString(R.string.state_connected_device);
                         actionBar.setSubtitle(String.format(title, mDeviceName));
+                        //save connected device
+                        DataBaseLab dataBaseLab = DataBaseLab.get(getApplicationContext());
+                        dataBaseLab.deleteDevice();
+                        dataBaseLab.insertDevice(mBluetoothFragment.getAddressBT());
                         break;
                     }
                     case BluetoothFragment.CONNECTING:{
@@ -177,6 +182,10 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
 
     protected void connectDevice(Intent data){
         mBluetoothFragment.connectDevice(data);
+    }
+
+    protected void connectDevice(String address){
+        mBluetoothFragment.connectDevice(address);
     }
 
 }

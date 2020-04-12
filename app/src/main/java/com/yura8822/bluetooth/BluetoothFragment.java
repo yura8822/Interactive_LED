@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.yura8822.R;
+import com.yura8822.device_search.DeviceListFragment;
 
 public class BluetoothFragment extends Fragment {
     private static final String TAG = "BluetoothFragment";
@@ -40,6 +41,8 @@ public class BluetoothFragment extends Fragment {
 
     //Member object for the bluetooth services
     private BluetoothService mBTService = null;
+
+    private String mAdressBT;
 
     public BluetoothFragment() {
     }
@@ -212,9 +215,17 @@ public class BluetoothFragment extends Fragment {
         if (extras == null) {
             return;
         }
-        String address = extras.getString("com.yura8822.extra_device_list");
+        mAdressBT = extras.getString(DeviceListFragment.EXTRA_DEVICE_ADDRESS);
         // Get the BluetoothDevice object
-        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(mAdressBT);
+        // Attempt to connect to the device
+        mBTService.connect(device);
+    }
+
+    public void connectDevice(String address) {
+        mAdressBT = address;
+        // Get the BluetoothDevice object
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(mAdressBT);
         // Attempt to connect to the device
         mBTService.connect(device);
     }
@@ -241,6 +252,10 @@ public class BluetoothFragment extends Fragment {
             }
         }
         return NONE;
+    }
+
+    public String getAddressBT() {
+        return mAdressBT;
     }
 
     //Sends a message

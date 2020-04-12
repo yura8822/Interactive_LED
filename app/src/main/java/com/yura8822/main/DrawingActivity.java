@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -17,20 +18,24 @@ import androidx.fragment.app.FragmentManager;
 
 import com.yura8822.R;
 import com.yura8822.SingleFragmentActivity;
-import com.yura8822.database.ImageLab;
+import com.yura8822.database.DataBaseLab;
 import com.yura8822.device_search.DeviceListActivity;
 import com.yura8822.gallery_image.GalleryActivity;
+
+import java.util.List;
 
 public class DrawingActivity extends SingleFragmentActivity {
     private static final String TAG = "DrawingActivity";
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 0;
-    private static final int REQUEST_DEVICE_ADRESS = 1;
+    private static final int REQUEST_DEVICE_ADDRESS = 1;
     private FragmentManager mFragmentManager;
+    private static boolean mFirstStart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFragmentManager = getSupportFragmentManager();
+        mFirstStart = true;
     }
 
     @Override
@@ -39,9 +44,21 @@ public class DrawingActivity extends SingleFragmentActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mFirstStart){
+            List<String> device = DataBaseLab.get(getApplicationContext()).getDevice();
+            if (device.size() == 1){
+                connectDevice(device.get(0));
+                Log.d(TAG,"Device mac : " + device.get(0) + " connected");
+            }
+            mFirstStart = false;
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         stopBluetooth();
-        ImageLab.get(getApplicationContext()).closeDBHelper();
         super.onDestroy();
     }
 
@@ -91,8 +108,7 @@ public class DrawingActivity extends SingleFragmentActivity {
         if (resultCode != Activity.RESULT_OK && data == null) {
             return;
         }
-
-        if (requestCode == REQUEST_DEVICE_ADRESS){
+        if (requestCode == REQUEST_DEVICE_ADDRESS){
             connectDevice(data);
         }
     }
@@ -107,7 +123,7 @@ public class DrawingActivity extends SingleFragmentActivity {
                             Manifest.permission.ACCESS_COARSE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
         }else {
-            startActivityForResult(new Intent(this, DeviceListActivity.class), REQUEST_DEVICE_ADRESS);
+            startActivityForResult(new Intent(this, DeviceListActivity.class), REQUEST_DEVICE_ADDRESS);
         }
     }
 
@@ -117,7 +133,7 @@ public class DrawingActivity extends SingleFragmentActivity {
             case MY_PERMISSIONS_REQUEST_ACCESS_LOCATION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                         grantResults[1] == PackageManager.PERMISSION_GRANTED){
-                    startActivityForResult(new Intent(this, DeviceListActivity.class), REQUEST_DEVICE_ADRESS);
+                    startActivityForResult(new Intent(this, DeviceListActivity.class), REQUEST_DEVICE_ADDRESS);
                 }
                 break;
             }

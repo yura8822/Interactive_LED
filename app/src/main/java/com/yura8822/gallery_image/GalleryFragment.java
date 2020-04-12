@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.yura8822.R;
 import com.yura8822.database.Image;
-import com.yura8822.database.ImageLab;
+import com.yura8822.database.DataBaseLab;
 import com.yura8822.utils.ImageUtils;
 
 import java.util.List;
@@ -54,7 +54,7 @@ public class GalleryFragment extends Fragment {
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
             int position = viewHolder.getAdapterPosition();
-            ImageLab.get(getContext().getApplicationContext()).deleteImage(mImages.get(position).getId());
+            DataBaseLab.get(getContext().getApplicationContext()).deleteImage(mImages.get(position).getId());
             mImages.remove(position);
             mAdapter.notifyItemRemoved(position);
             mAdapter.notifyItemRangeChanged(position, mImages.size());
@@ -89,7 +89,7 @@ public class GalleryFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.delete_image_button:{
-                        ImageLab.get(getContext().getApplicationContext()).deleteImages(mImages);
+                        DataBaseLab.get(getContext().getApplicationContext()).deleteImages(mImages);
                         for (int i = 0; i < mImages.size(); i++){
                             if (mImages.get(i).isChecked()){
                                 mImages.remove(i);
@@ -108,7 +108,7 @@ public class GalleryFragment extends Fragment {
             }
         });
 
-        mImages = ImageLab.get(getContext().getApplicationContext()).getImages();
+        mImages = DataBaseLab.get(getContext().getApplicationContext()).getImages();
         mRecyclerViewImages = view.findViewById(R.id.recycler_view_gallery);
         mRecyclerViewImages.setHasFixedSize(true);
         mRecyclerViewImages.setLayoutManager(new GridLayoutManager(getActivity(), 2));
