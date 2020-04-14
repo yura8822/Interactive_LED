@@ -46,11 +46,13 @@ public class DrawingActivity extends SingleFragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (mFirstStart){
+        //auto connect device
+        if (mFirstStart && isBluetoothEnabled()){
             List<String> device = DataBaseLab.get(getApplicationContext()).getDevice();
-            if (device.size() == 1){
+            if (device.size() == 1 && device.get(0) != null){
                 connectDevice(device.get(0));
-                Log.d(TAG,"Device mac : " + device.get(0) + " connected");
+                Log.d(TAG,"Device mac : " + device.get(0) + " connected" + ", " +
+                        "count device = " + device.size());
             }
             mFirstStart = false;
         }

@@ -87,7 +87,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
 
         MenuItem  bluetoothOn = menu.findItem(R.id.bluetooth_on);
         MenuItem bluetoothOff = menu.findItem(R.id.bluetooth_off);
-        MenuItem bluetoothConnecned = menu.findItem(R.id.bluetooth_connected);
+        MenuItem bluetoothConnected = menu.findItem(R.id.bluetooth_connected);
         if (mBluetoothEnabled){
             bluetoothOn.setVisible(true);
             bluetoothOff.setVisible(false);
@@ -97,9 +97,9 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
         }
 
         if (mBluetoothConnected == BluetoothFragment.CONNECTED){
-            bluetoothConnecned.setVisible(true);
+            bluetoothConnected.setVisible(true);
         }else {
-            bluetoothConnecned.setVisible(false);
+            bluetoothConnected.setVisible(false);
         }
 
         if (this.getClass() != DrawingActivity.class){
@@ -188,4 +188,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
         mBluetoothFragment.connectDevice(address);
     }
 
+    protected boolean isBluetoothEnabled() {
+        return mBluetoothEnabled;
+    }
 }
