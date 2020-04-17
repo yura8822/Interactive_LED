@@ -20,6 +20,7 @@ import com.yura8822.R;
 import com.yura8822.SingleFragmentActivity;
 import com.yura8822.database.DataBaseLab;
 import com.yura8822.device_search.DeviceListActivity;
+import com.yura8822.device_search.DeviceListFragment;
 import com.yura8822.gallery_image.GalleryActivity;
 
 import java.util.List;
@@ -28,6 +29,8 @@ public class DrawingActivity extends SingleFragmentActivity {
     private static final String TAG = "DrawingActivity";
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 0;
     private static final int REQUEST_DEVICE_ADDRESS = 1;
+    private static final String FIRST_START = "com.yura8822.first_start";
+
     private FragmentManager mFragmentManager;
     private static boolean mFirstStart;
 
@@ -35,7 +38,12 @@ public class DrawingActivity extends SingleFragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFragmentManager = getSupportFragmentManager();
-        mFirstStart = true;
+        if (savedInstanceState == null){
+            mFirstStart = true;
+        }else {
+            mFirstStart = savedInstanceState.getBoolean(FIRST_START);
+        }
+
     }
 
     @Override
@@ -50,12 +58,18 @@ public class DrawingActivity extends SingleFragmentActivity {
         if (mFirstStart && isBluetoothEnabled()){
             List<String> device = DataBaseLab.get(getApplicationContext()).getDevice();
             if (device.size() == 1 && device.get(0) != null){
-                connectDevice(device.get(0));
+                connectDevice(device.get(0).split(" ")[0]);
                 Log.d(TAG,"Device mac : " + device.get(0) + " connected" + ", " +
                         "count device = " + device.size());
             }
             mFirstStart = false;
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(FIRST_START, mFirstStart);
     }
 
     @Override
@@ -111,7 +125,7 @@ public class DrawingActivity extends SingleFragmentActivity {
             return;
         }
         if (requestCode == REQUEST_DEVICE_ADDRESS){
-            connectDevice(data);
+            connectDevice(data.getStringExtra(DeviceListFragment.EXTRA_DEVICE_ADDRESS));
         }
     }
 

@@ -1,6 +1,5 @@
 package com.yura8822.bluetooth;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -18,7 +17,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.yura8822.R;
-import com.yura8822.device_search.DeviceListFragment;
+
+import java.lang.ref.WeakReference;
 
 public class BluetoothFragment extends Fragment {
     private static final String TAG = "BluetoothFragment";
@@ -40,9 +40,11 @@ public class BluetoothFragment extends Fragment {
     private BluetoothAdapter mBluetoothAdapter = null;
 
     //Member object for the bluetooth services
-    private BluetoothService mBTService = null;
+    private static BluetoothService mBTService;
 
-    private String mAdressBT;
+    private String mAddressBT;
+
+    private Handler mHandler;
 
     public BluetoothFragment() {
     }
@@ -84,7 +86,7 @@ public class BluetoothFragment extends Fragment {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the bluetooth session
-        } else if (mBTService == null) {
+        } else {
             setupBT();
         }
     }
@@ -108,7 +110,9 @@ public class BluetoothFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         //Deletes all messages in the queue of this Handler
-        mHandler.removeCallbacksAndMessages(null);
+        if(mHandler != null){
+            mHandler.removeCallbacksAndMessages(null);
+        }
     }
 
     private void setupBT() {
@@ -117,33 +121,46 @@ public class BluetoothFragment extends Fragment {
         if (activity == null) {
             return;
         }
+        mHandler = new MyHandler(mOnBluetoothConnected, getActivity());
         // Initialize the BluetoothService to perform bluetooth connections
-        mBTService = new BluetoothService(activity, mHandler);
+        if (mBTService == null){
+            mBTService = BluetoothService.newInstance();
+            mBTService.setHandler(mHandler);
+        }else {
+            mBTService.setHandler(mHandler);
+        }
     }
 
     //The Handler that gets information back from the BluetoothService
-    @SuppressLint("HandlerLeak")
-    private final Handler mHandler = new Handler() {
+    private static class MyHandler extends Handler{
+        private WeakReference<OnBluetoothConnected> mOnBluetoothConnectedWeakReference;
+        private WeakReference<FragmentActivity> mActivityWeakReference;
+
+        MyHandler(OnBluetoothConnected onBluetoothConnected, FragmentActivity fragmentActivity){
+            mOnBluetoothConnectedWeakReference = new WeakReference<OnBluetoothConnected>(onBluetoothConnected);
+            mActivityWeakReference = new WeakReference<FragmentActivity>(fragmentActivity);
+        }
         @Override
-        public void handleMessage(Message msg) {
-            FragmentActivity activity = getActivity();
+        public void handleMessage(@NonNull Message msg) {
+            OnBluetoothConnected onBluetoothConnected = mOnBluetoothConnectedWeakReference.get();
+            FragmentActivity activity = mActivityWeakReference.get();
             switch (msg.what) {
                 case BluetoothService.MESSAGE_STATE_CHANGE: {
                     if (activity != null) { //temp !!!
                         switch (msg.arg1) {
 
                             case BluetoothService.STATE_CONNECTED:
-                                mOnBluetoothConnected.onStateConnected();
+                                onBluetoothConnected.onStateConnected();
                                 Log.d(TAG, "MESSAGE_STATE_CHANGE: STATE_CONNECTED");
                                 break;
 
                             case BluetoothService.STATE_CONNECTING:
-                                mOnBluetoothConnected.onStateConnected();
+                                onBluetoothConnected.onStateConnected();
                                 Log.d(TAG, "MESSAGE_STATE_CHANGE: STATE_CONNECTING");
                                 break;
 
                             case BluetoothService.STATE_NONE:
-                                mOnBluetoothConnected.onStateConnected();
+                                onBluetoothConnected.onStateConnected();
                                 Log.d(TAG, "MESSAGE_STATE_CHANGE: STATE_NONE");
                                 break;
                         }
@@ -166,27 +183,27 @@ public class BluetoothFragment extends Fragment {
                     // save the connected device's name
                     String connectedDeviceName = msg.getData().getString(BluetoothService.DEVICE_NAME);
                     if (null != activity) {
-                        mOnBluetoothConnected.getNameConnectedDevice(connectedDeviceName);
+                        onBluetoothConnected.getNameConnectedDevice(connectedDeviceName);
                     }
                     break;
                 }
                 case BluetoothService.MESSAGE_CONNECTION_FAILED: {
                     if (null != activity) {
                         Log.d(TAG, msg.getData().getString(BluetoothService.CONNECTION_FAILED));
-                        Toast.makeText(getActivity(), R.string.connection_failed, Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, R.string.connection_failed, Toast.LENGTH_LONG).show();
                     }
                     break;
                 }
                 case BluetoothService.MESSAGE_CONNECTION_LOST:{
                     if (null != activity){
                         Log.d(TAG, msg.getData().getString(BluetoothService.CONNECTION_LOST));
-                        Toast.makeText(getActivity(), R.string.connection_lost, Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, R.string.connection_lost, Toast.LENGTH_LONG).show();
                     }
                     break;
                 }
             }
         }
-    };
+    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -209,25 +226,14 @@ public class BluetoothFragment extends Fragment {
         }
     }
 
-    public void connectDevice(Intent data) {
-        // Get the device MAC address
-        Bundle extras = data.getExtras();
-        if (extras == null) {
-            return;
-        }
-        mAdressBT = extras.getString(DeviceListFragment.EXTRA_DEVICE_ADDRESS);
-        // Get the BluetoothDevice object
-        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(mAdressBT);
-        // Attempt to connect to the device
-        mBTService.connect(device);
-    }
-
     public void connectDevice(String address) {
-        mAdressBT = address;
-        // Get the BluetoothDevice object
-        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(mAdressBT);
-        // Attempt to connect to the device
-        mBTService.connect(device);
+        if (mBluetoothAdapter.isEnabled()){
+            mAddressBT = address;
+            // Get the BluetoothDevice object
+            BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(mAddressBT);
+            // Attempt to connect to the device
+            mBTService.connect(device);
+        }
     }
 
     //Stop all threads
@@ -255,7 +261,7 @@ public class BluetoothFragment extends Fragment {
     }
 
     public String getAddressBT() {
-        return mAdressBT;
+        return mAddressBT;
     }
 
     //Sends a message

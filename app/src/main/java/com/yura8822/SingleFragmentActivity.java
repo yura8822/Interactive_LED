@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,8 @@ import com.yura8822.bluetooth.BluetoothFragment;
 import com.yura8822.database.DataBaseLab;
 import com.yura8822.main.DrawingActivity;
 import com.yura8822.main.DrawingFragment;
+
+import java.util.List;
 
 public abstract class SingleFragmentActivity extends AppCompatActivity implements BluetoothFragment.OnBluetoothConnected,
         DrawingFragment.OnSendListener {
@@ -32,8 +35,6 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
 
     private boolean mBluetoothEnabled;
     private int mBluetoothConnected;
-
-    private String mDeviceName;
 
     protected abstract Fragment createFragment();
 
@@ -119,7 +120,10 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
 
     @Override
     public void getNameConnectedDevice(String name) {
-        mDeviceName = name;
+        //save connected device
+        DataBaseLab dataBaseLab = DataBaseLab.get(getApplicationContext());
+        dataBaseLab.deleteDevice();
+        dataBaseLab.insertDevice(mBluetoothFragment.getAddressBT() + " " + name);
     }
 
     private void updateMenu(){
@@ -132,11 +136,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
                 switch (mBluetoothConnected){
                     case BluetoothFragment.CONNECTED:{
                         String title = getResources().getString(R.string.state_connected_device);
-                        actionBar.setSubtitle(String.format(title, mDeviceName));
-                        //save connected device
-                        DataBaseLab dataBaseLab = DataBaseLab.get(getApplicationContext());
-                        dataBaseLab.deleteDevice();
-                        dataBaseLab.insertDevice(mBluetoothFragment.getAddressBT());
+                        actionBar.setSubtitle(String.format(title, DataBaseLab.get(getApplicationContext()).getDevice().get(0).split(" ")[1]));
                         break;
                     }
                     case BluetoothFragment.CONNECTING:{
@@ -180,11 +180,23 @@ public abstract class SingleFragmentActivity extends AppCompatActivity implement
         mBluetoothFragment.stop();
     }
 
-    protected void connectDevice(Intent data){
-        mBluetoothFragment.connectDevice(data);
-    }
-
     protected void connectDevice(String address){
+        String currentAddress = null;
+        List<String> device = DataBaseLab.get(getApplicationContext()).getDevice();
+        if (device.size() == 1 && device.get(0) != null){
+            currentAddress = device.get(0).split(" ")[0];
+        }
+
+        if (currentAddress != null && mBluetoothFragment.getStateConnected() != BluetoothFragment.NONE){
+            if (currentAddress.equals(address)){
+                String title = getResources().getString(R.string.selected_device_is_already_connected);
+                String message = String.format(title, DataBaseLab.get(getApplicationContext()).getDevice().get(0).split(" ")[1]);
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                return;
+            }else{
+                stopBluetooth();
+            }
+        }
         mBluetoothFragment.connectDevice(address);
     }
 

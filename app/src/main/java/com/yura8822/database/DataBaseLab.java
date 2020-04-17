@@ -101,10 +101,10 @@ public class DataBaseLab {
         return contentValues;
     }
 
-    public void insertDevice(String mac) {
+    public void insertDevice(String mac_name) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(DeviceTable.Colls.KEY, DEVICE_KEY);
-        contentValues.put(DeviceTable.Colls.MAC, mac);
+        contentValues.put(DeviceTable.Colls.MAC, mac_name);
         mDatabase.insert(DeviceTable.TABLE_NAME, null, contentValues);
     }
 

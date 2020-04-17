@@ -11,6 +11,7 @@
     <string name="state_non_connected_device">Подключите устройство</string>
     <string name="state_connected_device">Подключено: %1$s</string>
     <string name="state_connecting_device">Подключаю...</string>
+    <string name="selected_device_is_already_connected">%1$s уже подключен</string>
 
     <!--    menu: activity_single_fragment-->
     <string name="bluetooth_on">Bluetooth включен</string>

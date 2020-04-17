@@ -3,7 +3,6 @@ package com.yura8822.bluetooth;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,6 +15,7 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class BluetoothService {
+    private static BluetoothService sBluetoothService;
     // Message types
     final static int MESSAGE_STATE_CHANGE = 1;
     final static int MESSAGE_READ = 2;
@@ -37,7 +37,7 @@ public class BluetoothService {
 
     // Member fields
     private final BluetoothAdapter mAdapter;
-    private final Handler mHandler;
+    private Handler mHandler;
     private int mState;
     private int mNewState;
     private ConnectThread mConnectThread;
@@ -48,13 +48,22 @@ public class BluetoothService {
     static final int STATE_CONNECTING = 1; // now initiating an outgoing connection
     static final int STATE_CONNECTED = 2;  // now connected to a remote device
 
-    BluetoothService(Context context, Handler handler) {
+    private BluetoothService() {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mNewState = mState;
-        mHandler = handler;
     }
 
+    public static BluetoothService newInstance(){
+        if (sBluetoothService == null){
+            sBluetoothService = new BluetoothService();
+        }
+        return sBluetoothService;
+    }
+
+    public void setHandler(Handler handler) {
+        mHandler = handler;
+    }
 
     //Update UI title according to the current state of the BT connection
     private synchronized void updateUserInterfaceTitle() {
